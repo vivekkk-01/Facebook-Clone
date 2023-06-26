@@ -6,6 +6,12 @@ const dotenv = require("dotenv");
 dotenv.config();
 const PORT = process.env.PORT || 5000;
 
+app.use(express.json());
+
+const userRoutes = require("./routes/user");
+
+app.use("/api/user", userRoutes);
+
 app.use(cors());
 
 app.listen(PORT, () => {
