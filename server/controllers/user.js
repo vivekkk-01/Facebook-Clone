@@ -50,6 +50,7 @@ exports.postRegister = async (req, res) => {
     await user.save();
     const url = `http://localhost:3000/activate/${verificationToken}`;
     await sendVerificationEmail(user, url);
+    const accessToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY);
     res.status(201).json({
       id: user._id,
       firstName: user.first_name,
@@ -57,6 +58,8 @@ exports.postRegister = async (req, res) => {
       username: user.username,
       picture: user.picture,
       verified: user.verified,
+      accessToken,
+      message: "Check your Email to activate your account!",
     });
   } catch (error) {
     return res
