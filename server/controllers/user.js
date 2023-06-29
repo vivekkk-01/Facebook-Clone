@@ -103,6 +103,9 @@ exports.postLogin = async (req, res) => {
       id: user._id,
       firstName: user.first_name,
       lastName: user.last_name,
+      username: user.username,
+      picture: user.picture,
+      verified: user.verified,
       accessToken,
     });
   } catch (error) {
