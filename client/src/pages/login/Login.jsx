@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-
+import store from "../../redux/store";
 import classes from "./login.module.css";
+import { redirect } from "react-router-dom";
 
 import LoginForm from "../../components/login/LoginForm";
 import LoginFooter from "../../components/login/LoginFooter";
@@ -20,3 +21,9 @@ const Login = () => {
 };
 
 export default Login;
+
+export const loader = () => {
+  const userInfo = store.getState().user.userInfo;
+  if (userInfo) return redirect("/");
+  return null;
+};

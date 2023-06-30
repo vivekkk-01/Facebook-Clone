@@ -94,6 +94,7 @@ const Header = () => {
           ref={menuRef}
         >
           <div
+            style={{ transform: "translateY(2px)" }}
             onClick={() => {
               setShowAllMenu((prev) => !prev);
             }}
@@ -110,6 +111,7 @@ const Header = () => {
           <div className={classes.right_notification}>5</div>
         </div>
         <div
+          style={{ transform: "translateY(2px)" }}
           className={`hover1 ${classes.circle_icon} ${
             showUserMenu && classes.active_header
           }`}

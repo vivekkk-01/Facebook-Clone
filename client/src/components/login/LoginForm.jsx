@@ -39,7 +39,10 @@ const LoginForm = ({ classes, setVisible }) => {
         );
         setLoading(false);
         dispatch(setUserInfoAction(data));
-        Cookies.set("user", JSON.stringify(data));
+        Cookies.set("user", JSON.stringify(data), {
+          secure: true,
+          sameSite: "strict",
+        });
         navigate("/");
       } catch (error) {
         setLoading(false);

@@ -1,22 +1,32 @@
-import React, { useRef, useState } from "react";
 import Header from "../../components/header/Header";
-import useClickOutside from "../../hooks/useClickOutside";
+import store from "../../redux/store";
+import { redirect } from "react-router-dom";
+import Left from "../../components/home/leftHome/Left";
+import { useSelector } from "react-redux";
+import Right from "../../components/home/right/Right";
+import classes from "./home.module.css";
+import Stories from "../../components/home/storiesHome/Stories";
+import CreatePost from "../../components/home/createPost/CreatePost";
 
 const Home = () => {
-  const [visible, setVisible] = useState(false);
-  const divRef = useRef();
-  useClickOutside(divRef, () => setVisible(false));
+  const { userInfo } = useSelector((state) => state.user);
   return (
-    <div>
+    <div className={classes.home}>
       <Header />
-      {visible && (
-        <div
-          ref={divRef}
-          style={{ height: "250px", width: "250px", background: "red" }}
-        ></div>
-      )}
+      <Left user={userInfo} />
+      <div className={classes.home_middle}>
+        <Stories />
+        <CreatePost user={userInfo} />
+      </div>
+      <Right user={userInfo} />
     </div>
   );
 };
 
 export default Home;
+
+export const loader = () => {
+  const userInfo = store.getState().user.userInfo;
+  if (!userInfo) return redirect("/login");
+  return null;
+};
