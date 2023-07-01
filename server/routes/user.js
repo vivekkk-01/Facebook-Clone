@@ -5,7 +5,10 @@ const {
   postRegister,
   postActivate,
   postLogin,
+  postAuth,
+  resendVerification,
 } = require("../controllers/user");
+const auth = require("../middlewares/auth.");
 
 router.post(
   "/register",
@@ -35,7 +38,9 @@ router.post(
   postRegister
 );
 
-router.post("/activate", postActivate);
+router.post("/activate", auth, postActivate);
 
 router.post("/login", postLogin);
+
+router.post("/resend-verification", auth, resendVerification);
 module.exports = router;

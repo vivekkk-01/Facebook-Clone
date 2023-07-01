@@ -1,11 +1,21 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SettingsPrivacy from "./SettingsPrivacy";
 import HelpSupport from "./HelpSupport";
 import DisplayAccessibility from "./DisplayAccessibility";
+import { useDispatch } from "react-redux";
+import { logoutAction } from "../../../redux/actions/userActions";
 
 const UserMenu = ({ user, classes }) => {
   const [visible, setVisible] = useState(0);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const logout = () => {
+    dispatch(logoutAction());
+    navigate("/login");
+  };
+
   return (
     <div className={classes.mmenu}>
       {visible === 0 && (
@@ -68,7 +78,7 @@ const UserMenu = ({ user, classes }) => {
               <i className="right_icon"></i>
             </div>
           </div>
-          <div className={`${classes.mmenu_item} hover3`}>
+          <div className={`${classes.mmenu_item} hover3`} onClick={logout}>
             <div className={classes.small_circle}>
               <i className="logout_filled_icon"></i>
             </div>

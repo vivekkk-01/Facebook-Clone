@@ -42,6 +42,7 @@ const LoginForm = ({ classes, setVisible }) => {
         Cookies.set("user", JSON.stringify(data), {
           secure: true,
           sameSite: "strict",
+          expires: 30
         });
         navigate("/");
       } catch (error) {

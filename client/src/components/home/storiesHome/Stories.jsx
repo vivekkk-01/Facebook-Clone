@@ -41,7 +41,7 @@ const Stories = () => {
         <p className={classes.story_create_text}>Create Story</p>
       </div>
       {stories.slice(0, max).map((story, i) => (
-        <Story story={story} classes={classes} />
+        <Story key={story.image} story={story} classes={classes} />
       ))}
       <div className={classes.white_circle}>
         <ArrowRight color="#65676b" />

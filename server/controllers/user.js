@@ -59,7 +59,7 @@ exports.postRegister = async (req, res) => {
       picture: user.picture,
       verified: user.verified,
       accessToken,
-      message: "Check your Email to activate your account!",
+      message: "We sent you a verification email. Check your mailbox!",
     });
   } catch (error) {
     return res
@@ -73,9 +73,11 @@ exports.postActivate = async (req, res) => {
     const { token } = req.body;
     const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
     const user = await User.findOne({ accountVerificationToken: hashedToken });
+    if (user._id.toString() !== req.user._id.toString())
+      return res.status(403).json("You are not authorized!");
     if (!user) return res.status(403).json("Invalid Token!");
     if (user.verified) return res.status(403).json("User is already verified!");
-    if (!user.accountVerificationTokenExpire > new Date())
+    if (user.accountVerificationTokenExpire < new Date())
       return res.status(401).json("Token is expired, try again later.");
 
     user.isAccountVerified = true;
@@ -108,6 +110,35 @@ exports.postLogin = async (req, res) => {
       verified: user.verified,
       accessToken,
     });
+  } catch (error) {
+    return res
+      .status(error.code || 500)
+      .json(error.message || "Something went wrong, please try again!");
+  }
+};
+
+exports.resendVerification = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json("User not Found!");
+    if (user.verified) return res.status(403).json("User is already verified!");
+    if (user.accountVerificationTokenExpire > new Date())
+      return res
+        .status(403)
+        .json(
+          "We've already sent you a verification email. Check your mailbox!"
+        );
+    const verificationToken = crypto.randomBytes(32).toString("hex");
+    user.accountVerificationToken = crypto
+      .createHash("sha256")
+      .update(verificationToken)
+      .digest("hex");
+    user.accountVerificationTokenExpire = Date.now() + 30 * 60 * 1000;
+
+    await user.save();
+    const url = `http://localhost:3000/activate/${verificationToken}`;
+    await sendVerificationEmail(user, url);
+    return res.json("We sent a verification email to your email address!");
   } catch (error) {
     return res
       .status(error.code || 500)

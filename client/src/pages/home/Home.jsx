@@ -7,6 +7,7 @@ import Right from "../../components/home/right/Right";
 import classes from "./home.module.css";
 import Stories from "../../components/home/storiesHome/Stories";
 import CreatePost from "../../components/home/createPost/CreatePost";
+import SendVerificationLink from "../../components/home/verification/SendVerificationLink";
 
 const Home = () => {
   const { userInfo } = useSelector((state) => state.user);
@@ -16,6 +17,9 @@ const Home = () => {
       <Left user={userInfo} />
       <div className={classes.home_middle}>
         <Stories />
+        {!userInfo?.verified && (
+          <SendVerificationLink accessToken={userInfo?.accessToken} />
+        )}
         <CreatePost user={userInfo} />
       </div>
       <Right user={userInfo} />

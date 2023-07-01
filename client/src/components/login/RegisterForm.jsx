@@ -90,7 +90,11 @@ const RegisterForm = ({ classes, setVisible }) => {
         const { message, ...rest } = data;
         setTimeout(() => {
           dispatch(setUserInfoAction(rest));
-          Cookies.set("user", JSON.stringify(rest));
+          Cookies.set("user", JSON.stringify(rest), {
+            expires: 30,
+            secure: true,
+            sameSite: "strict",
+          });
           navigate("/");
         }, 2000);
       } catch (error) {
