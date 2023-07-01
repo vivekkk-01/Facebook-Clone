@@ -42,7 +42,7 @@ const LoginForm = ({ classes, setVisible }) => {
         Cookies.set("user", JSON.stringify(data), {
           secure: true,
           sameSite: "strict",
-          expires: 30
+          expires: 30,
         });
         navigate("/");
       } catch (error) {
@@ -106,14 +106,13 @@ const LoginForm = ({ classes, setVisible }) => {
           <Link to="/forgot-password" className={classes.forgot_password}>
             Forgot Password?
           </Link>
-          <div className={classes.sign_splitter}>
-            <button
-              onClick={() => setVisible(true)}
-              className={`blue_btn ${classes.open_signup}`}
-            >
-              Create Account
-            </button>
-          </div>
+          <div className={classes.sign_splitter}></div>
+          <button
+            onClick={() => setVisible(true)}
+            className={`blue_btn ${classes.open_signup}`}
+          >
+            Create Account
+          </button>
         </div>
       </div>
     </div>
