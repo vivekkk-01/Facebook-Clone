@@ -3,7 +3,7 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
-const sendVerificationEmail = require("../mailer");
+const { sendVerificationEmail, sendPasswordResetOTP } = require("../mailer");
 const crypto = require("crypto");
 
 exports.postRegister = async (req, res) => {
@@ -139,6 +139,86 @@ exports.resendVerification = async (req, res) => {
     const url = `http://localhost:3000/activate/${verificationToken}`;
     await sendVerificationEmail(user, url);
     return res.json("We sent a verification email to your email address!");
+  } catch (error) {
+    return res
+      .status(error.code || 500)
+      .json(error.message || "Something went wrong, please try again!");
+  }
+};
+
+exports.findUser = async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.params.email });
+    if (!user) return res.status(404).json("Account doesn't exist!");
+    return res.json({ picture: user.picture, email: user.email });
+  } catch (error) {
+    return res
+      .status(error.code || 500)
+      .json(error.message || "Something went wrong, please try again!");
+  }
+};
+
+exports.resetPasswordOTP = async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) return res.status(404).json("Account doesn't exist!");
+    if (user.passwordResetOTPExpire > new Date())
+      return res
+        .status(403)
+        .json("We've already sent you an OTP! Check your mailbox!");
+    let OTP = "";
+    for (let i = 0; i < 5; i++) {
+      OTP += Math.floor(Math.random() * 10);
+    }
+    const securedOTP = await bcrypt.hash(OTP, 10);
+    user.passwordResetOTP = securedOTP;
+    user.passwordResetOTPExpire = Date.now() + 30 * 60 * 1000;
+    await user.save();
+    await sendPasswordResetOTP(user, OTP);
+    return res.json("We've sent you an OTP! Check your mailbox!");
+  } catch (error) {
+    return res
+      .status(error.code || 500)
+      .json(error.message || "Something went wrong, please try again!");
+  }
+};
+
+exports.verifyOTP = async (req, res) => {
+  try {
+    const { OTP, email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json("Account Not Found!");
+    if (!user.passwordResetOTP)
+      return res.status(403).json("We haven't sent you an OTP!");
+    const isCorrectOTP = await bcrypt.compare(OTP, user.passwordResetOTP);
+    if (!isCorrectOTP) return res.status(404).json("Enter a correct OTP!");
+    if (user.passwordResetOTPExpire < new Date())
+      return res.status(403).json("OTP has expired. Try again!");
+    await user.save();
+    return res.json("Correct OTP");
+  } catch (error) {
+    return res
+      .status(error.code || 500)
+      .json(error.message || "Something went wrong, please try again!");
+  }
+};
+
+exports.postResetPassword = async (req, res) => {
+  try {
+    const { password, confirmPassword, email, OTP } = req.body;
+    if (password !== confirmPassword)
+      return res.status(401).json("Passwords must match!");
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json("User Not Found!");
+    const isCorrectOTP = await bcrypt.compare(OTP, user.passwordResetOTP);
+    if (!isCorrectOTP) return res.status(404).json("Enter a correct OTP!");
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user.password = hashedPassword;
+    user.passwordResetOTP = null;
+    user.passwordResetOTPExpire = null;
+    await user.save();
+    return res.json("You successfully changed your password!");
   } catch (error) {
     return res
       .status(error.code || 500)

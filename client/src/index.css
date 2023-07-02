@@ -54,6 +54,23 @@ a {
   cursor: pointer;
 }
 
+.gray_btn {
+  border: none;
+  outline: none;
+  background: var(--bg-secondary);
+  padding: 8.5px 12px;
+  border-radius: 7px;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 14px;
+  color: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
 .blur_absolute {
   position: absolute;
   top: 0;
@@ -90,4 +107,18 @@ a {
 .scrollbar::-webkit-scrollbar-thumb {
   background: #aeaeafa1;
   border-radius: 5px;
+}
+
+.error_text {
+  color: #b94a48;
+  margin: 0.5rem 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.success_text {
+  color: var(--green-color);
+  margin: 0.5rem 0;
+  font-size: 18px;
+  font-weight: 600;
 }

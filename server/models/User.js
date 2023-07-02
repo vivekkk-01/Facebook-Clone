@@ -51,6 +51,8 @@ const userSchema = new Schema(
     },
     accountVerificationToken: String,
     accountVerificationTokenExpire: Date,
+    passwordResetOTP: String,
+    passwordResetOTPExpire: Date,
     birth_year: {
       type: Number,
       trim: true,
@@ -147,6 +149,5 @@ const userSchema = new Schema(
   },
   { timestamps: true }
 );
-
 
 module.exports = mongoose.model("User", userSchema);

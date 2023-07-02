@@ -7,6 +7,10 @@ const {
   postLogin,
   postAuth,
   resendVerification,
+  findUser,
+  resetPasswordOTP,
+  verifyOTP,
+  postResetPassword,
 } = require("../controllers/user");
 const auth = require("../middlewares/auth.");
 
@@ -43,4 +47,13 @@ router.post("/activate", auth, postActivate);
 router.post("/login", postLogin);
 
 router.post("/resend-verification", auth, resendVerification);
+
+router.get("/find-user/:email", findUser);
+
+router.post("/reset-password-otp", resetPasswordOTP);
+
+router.post("/verify-otp", verifyOTP);
+
+router.post("/reset-password", postResetPassword);
+
 module.exports = router;

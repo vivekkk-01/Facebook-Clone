@@ -103,7 +103,7 @@ const LoginForm = ({ classes, setVisible }) => {
             </button>
             {error && <div className={classes.error_text}>{error}</div>}
           </form>
-          <Link to="/forgot-password" className={classes.forgot_password}>
+          <Link to="/reset" className={classes.forgot_password}>
             Forgot Password?
           </Link>
           <div className={classes.sign_splitter}></div>
