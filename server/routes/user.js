@@ -5,7 +5,6 @@ const {
   postRegister,
   postActivate,
   postLogin,
-  postAuth,
   resendVerification,
   findUser,
   resetPasswordOTP,

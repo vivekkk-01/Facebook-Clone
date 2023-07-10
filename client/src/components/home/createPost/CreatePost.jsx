@@ -1,11 +1,17 @@
 import React from "react";
 import classes from "./createPost.module.css";
 import { Feeling, LiveVideo, Photo } from "../../../svg";
+import { useDispatch } from "react-redux";
+import { postPopupActions } from "../../../redux/actions/postPopActions";
 
 const CreatePost = ({ user }) => {
+  const dispatch = useDispatch();
+  const handlePostPopup = () => {
+    dispatch(postPopupActions(true));
+  };
   return (
     <div className={classes.createPost}>
-      <div className={classes.createPost_header}>
+      <div className={classes.createPost_header} onClick={handlePostPopup}>
         <img src={user?.picture} alt="" />
         <p className={classes.open_post}>
           What's on your mind, {user?.firstName}?

@@ -10,8 +10,10 @@ app.use(cors());
 app.use(express.json());
 
 const userRoutes = require("./routes/user");
+const postRoutes = require("./routes/post");
 
 app.use("/api/user", userRoutes);
+app.use("/api/post", postRoutes);
 
 app.listen(PORT, () => {
   console.log("Server is listening...");
