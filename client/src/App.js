@@ -21,7 +21,7 @@ function App() {
   return (
     <>
       {isPostPopup && <CreatePostsPopup />}
-      <RouterProvider router={router} />;
+      <RouterProvider router={router} />
     </>
   );
 }

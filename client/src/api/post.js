@@ -1,7 +1,6 @@
 import axios from "axios";
 
 export const createPost = async (data, token) => {
-  console.log(data.get("path"), "DATA");
   try {
     await axios.post(
       `${process.env.REACT_APP_SERVER_ROUTE}/post/create`,

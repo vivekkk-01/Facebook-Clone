@@ -14,7 +14,6 @@ exports.createPost = async (req, res) => {
   try {
     const post = await Post.create(req.body);
     const { path: imagePath } = req.body;
-    console.log(imagePath, "IMAGEPATH");
     if (req.files) {
       await Promise.all(
         req.files?.map(async (file) => {
@@ -35,7 +34,19 @@ exports.createPost = async (req, res) => {
     await post.save();
     return res.status(201).json(post);
   } catch (error) {
-    console.log(error, "ERrOr");
+    return res
+      .status(error.code || 500)
+      .json(error.message || "Something went wrong, please try again!");
+  }
+};
+
+exports.getAllPosts = async (req, res) => {
+  try {
+    const posts = await Post.find()
+      .populate("user", "first_name last_name picture gender username")
+      .sort({ createdAt: -1 });
+    return res.json(posts);
+  } catch (error) {
     return res
       .status(error.code || 500)
       .json(error.message || "Something went wrong, please try again!");

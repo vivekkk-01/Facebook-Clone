@@ -10,8 +10,6 @@ const imageFileFilter = (req, file, cb) => {
 const uploadImage = multer({ storage, fileFilter: imageFileFilter });
 
 const validatePostImages = async (req, res, next) => {
-  if (!req.files || req.files.length <= 0)
-    return res.status(403).json("You haven't selected an image.");
   req.files.length > 0 &&
     req.files.forEach((file) => {
       if (!file.mimetype.startsWith("image"))
