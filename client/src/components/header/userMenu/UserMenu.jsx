@@ -3,13 +3,14 @@ import { Link, useNavigate } from "react-router-dom";
 import SettingsPrivacy from "./SettingsPrivacy";
 import HelpSupport from "./HelpSupport";
 import DisplayAccessibility from "./DisplayAccessibility";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logoutAction } from "../../../redux/actions/userActions";
 
 const UserMenu = ({ user, classes }) => {
   const [visible, setVisible] = useState(0);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { userInfo } = useSelector((state) => state.user);
 
   const logout = () => {
     dispatch(logoutAction());
@@ -20,7 +21,10 @@ const UserMenu = ({ user, classes }) => {
     <div className={classes.mmenu}>
       {visible === 0 && (
         <div>
-          <Link to="/profile" className={`${classes.mmenu_header} hover3`}>
+          <Link
+            to={`/profile/${userInfo?.username}`}
+            className={`${classes.mmenu_header} hover3`}
+          >
             <img src={user?.picture} alt="" />
             <div className={classes.mmenu_col}>
               <span>

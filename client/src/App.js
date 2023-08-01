@@ -11,7 +11,7 @@ import { useSelector } from "react-redux";
 const router = createBrowserRouter([
   { path: "/", element: <Home />, loader: homeLoader },
   { path: "/login", element: <Login />, loader: loginLoader },
-  { path: "/profile", element: <Profile />, loader: profileLoader },
+  { path: "/profile/:username", element: <Profile />, loader: profileLoader },
   { path: "/activate/:token", element: <Activate />, loader: activateLoader },
   { path: "/reset", element: <Reset /> },
 ]);

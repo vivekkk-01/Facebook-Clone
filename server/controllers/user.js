@@ -1,10 +1,21 @@
 const { validateUsername } = require("../helper");
 const User = require("../models/User");
+const Post = require("../models/Post");
 const bcrypt = require("bcryptjs");
+const cloudinary = require("cloudinary");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const { sendVerificationEmail, sendPasswordResetOTP } = require("../mailer");
 const crypto = require("crypto");
+const path = require("path");
+const { unlink } = require("fs");
+
+cloudinary.v2.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET_KEY,
+  secure: true,
+});
 
 exports.postRegister = async (req, res) => {
   try {
@@ -219,6 +230,70 @@ exports.postResetPassword = async (req, res) => {
     user.passwordResetOTPExpire = null;
     await user.save();
     return res.json("You successfully changed your password!");
+  } catch (error) {
+    return res
+      .status(error.code || 500)
+      .json(error.message || "Something went wrong, please try again!");
+  }
+};
+
+exports.getProfile = async (req, res) => {
+  try {
+    const { username } = req.params;
+    const profile = await User.findOne({ username }).select("-password");
+    const posts = await Post.find({ user: profile._id }).populate("user");
+    if (!profile) return res.status(403).json("Profile Not Found!");
+    return res.json({ ...profile.toObject(), posts });
+  } catch (error) {
+    return res
+      .status(error.code || 500)
+      .json(error.message || "Something went wrong, please try again!");
+  }
+};
+
+exports.getAllImages = async (req, res) => {
+  const { path, max } = req.body;
+  try {
+    cloudinary.v2.api.resources(
+      {
+        type: "upload",
+        prefix: path, // add your folder
+        max_results: max,
+      },
+      function (error, result) {
+        if (error) throw new Error(error);
+        res.status(200).json(result);
+      }
+    );
+  } catch (error) {
+    return res
+      .status(error.code || 500)
+      .json(error.message || "Something went wrong, please try again!");
+  }
+};
+
+exports.updateProfilePicture = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select(
+      "-password"
+    );
+    const { path: imagePath } = req.body;
+    const filePath = path.join(
+      `public/uploads/profilePicture/${req.file.filename}`
+    );
+    const { secure_url } = await cloudinary.v2.uploader.upload(filePath, {
+      folder: imagePath ? imagePath : null,
+    });
+
+    user.picture = secure_url;
+    await user.save();
+    unlink(filePath, (err) => {
+      if (err) {
+        throw err;
+      }
+    });
+    const posts = await Post.find({ user: user._id }).populate("user");
+    return res.json({ ...user.toObject(), posts });
   } catch (error) {
     return res
       .status(error.code || 500)

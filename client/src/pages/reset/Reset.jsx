@@ -63,12 +63,12 @@ const Reset = () => {
       } catch (error) {
         setLoading(false);
         setError(
-          error.response.data
-            ? error.response.data
-            : error.response.data.message
-            ? error.response.data.message
-            : error.message
-            ? error.message
+          error?.response?.data
+            ? error?.response?.data
+            : error?.response?.data?.message
+            ? error?.response?.data?.message
+            : error?.message
+            ? error?.message
             : "Something went wrong, please try again!"
         );
       }
@@ -92,12 +92,12 @@ const Reset = () => {
       } catch (error) {
         setLoading(false);
         setError(
-          error.response.data
-            ? error.response.data
-            : error.response.data.message
-            ? error.response.data.message
-            : error.message
-            ? error.message
+          error?.response?.data
+            ? error?.response?.data
+            : error?.response?.data?.message
+            ? error?.response?.data?.message
+            : error?.message
+            ? error?.message
             : "Something went wrong, please try again!"
         );
       }
@@ -128,12 +128,12 @@ const Reset = () => {
       } catch (error) {
         setLoading(false);
         setError(
-          error.response.data
-            ? error.response.data
-            : error.response.data.message
-            ? error.response.data.message
-            : error.message
-            ? error.message
+          error?.response?.data
+            ? error?.response?.data
+            : error?.response?.data?.message
+            ? error?.response?.data?.message
+            : error?.message
+            ? error?.message
             : "Something went wrong, please try again!"
         );
       }
@@ -154,15 +154,15 @@ const Reset = () => {
     } catch (error) {
       setLoading(false);
       setError(
-        error?.response.data
-          ? error?.response.data
-          : error?.response.data.message
-          ? error?.response.data.message
+        error?.response?.data
+          ? error?.response?.data
+          : error?.response?.data?.message
+          ? error?.response?.data?.message
           : error?.message
           ? error?.message
           : "Something went wrong, please try again!"
       );
-      error.response?.status === 403 &&
+      error?.response?.status === 403 &&
         setTimeout(() => {
           setVisible(2);
         }, 3500);

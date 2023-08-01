@@ -10,8 +10,17 @@ const {
   resetPasswordOTP,
   verifyOTP,
   postResetPassword,
+  getProfile,
+  getAllImages,
+  updateProfilePicture,
 } = require("../controllers/user");
+
 const auth = require("../middlewares/auth.");
+
+const {
+  uploadImage,
+  validateProfilePicture,
+} = require("../middlewares/imageUpload");
 
 router.post(
   "/register",
@@ -54,5 +63,17 @@ router.post("/reset-password-otp", resetPasswordOTP);
 router.post("/verify-otp", verifyOTP);
 
 router.post("/reset-password", postResetPassword);
+
+router.get("/get-profile/:username", auth, getProfile);
+
+router.post("/get-all-images", auth, getAllImages);
+
+router.put(
+  "/update-profile-picture",
+  auth,
+  uploadImage.single("image"),
+  validateProfilePicture,
+  updateProfilePicture
+);
 
 module.exports = router;

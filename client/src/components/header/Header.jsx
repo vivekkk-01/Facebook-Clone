@@ -1,10 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import classes from "./header.module.css";
 import { Link } from "react-router-dom";
 import {
   ArrowDown,
   Friends,
   Gaming,
+  Home,
   HomeActive,
   Logo,
   Market,
@@ -20,7 +21,7 @@ import AllMenu from "./AllMenu";
 import UserMenu from "./userMenu/UserMenu";
 import useClickOutside from "../../hooks/useClickOutside";
 
-const Header = () => {
+const Header = ({ page }) => {
   const color = "#65676b";
   const { userInfo } = useSelector((state) => state.user);
   const [showSearchMenu, setShowSearchMenu] = useState(false);
@@ -65,8 +66,13 @@ const Header = () => {
         />
       )}
       <div className={classes.header_middle}>
-        <Link to="/" className={`${classes.middle_icon} ${classes.active}`}>
-          <HomeActive />
+        <Link
+          to="/"
+          className={`${classes.middle_icon} ${
+            page === "home" ? classes.active : "hover1"
+          }`}
+        >
+          {page === "home" ? <HomeActive /> : <Home />}
         </Link>
         <Link to="/" className={`hover1 ${classes.middle_icon}`}>
           <Friends color={color} />
@@ -83,7 +89,12 @@ const Header = () => {
         </Link>
       </div>
       <div className={classes.header_right}>
-        <Link to="/profile" className={`hover1 ${classes.profile_link}`}>
+        <Link
+          to={`/profile/${userInfo?.username}`}
+          className={`${classes.profile_link} ${
+            page === "profile" ? classes.active_link : "hover1"
+          }`}
+        >
           <img src={userInfo?.picture} />
           <span>{userInfo?.firstName}</span>
         </Link>

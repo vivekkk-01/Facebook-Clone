@@ -90,6 +90,10 @@ header {
 .active svg {
   transform: translateY(1px) translateX(-1px);
 }
+.active_link {
+  background-color: var(--light-blue-color);
+  color: var(--blue-color);
+}
 .middle_notification {
   position: absolute;
   top: 3px;

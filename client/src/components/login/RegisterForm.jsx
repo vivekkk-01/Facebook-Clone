@@ -101,12 +101,12 @@ const RegisterForm = ({ classes, setVisible }) => {
         setLoading(false);
         setSuccess("");
         setError(
-          error.response.data
-            ? error.response.data
-            : error.response.data.message
-            ? error.response.data.message
-            : error.message
-            ? error.message
+          error?.response?.data
+            ? error?.response?.data
+            : error?.response?.data?.message
+            ? error?.response?.data?.message
+            : error?.message
+            ? error?.message
             : "Something went wrong, please try again!"
         );
       }

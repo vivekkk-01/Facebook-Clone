@@ -16,7 +16,7 @@ export const getPostsActions = () => async (dispatch) => {
     );
     dispatch(setAllPosts(data));
   } catch (error) {
-    const err = error.response.data
+    const err = error?.response?.data
       ? error?.response?.data
       : error?.response?.data?.message
       ? error?.response?.data?.message

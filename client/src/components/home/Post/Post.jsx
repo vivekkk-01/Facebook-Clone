@@ -8,13 +8,13 @@ import CreateComment from "./CreateComment";
 import PostMenu from "./PostMenu";
 import useClickOutside from "../../../hooks/useClickOutside";
 
-const Post = ({ post, user }) => {
+const Post = ({ post, user, profile }) => {
   const [visible, setVisible] = useState(false);
-  const [showMenu, setShowMenu] = useState(true);
+  const [showMenu, setShowMenu] = useState(false);
   const menu = useRef(null);
   useClickOutside(menu, () => setShowMenu(false));
   return (
-    <div className={classes.post}>
+    <div className={classes.post} style={{ width: `${profile && "100%"}` }}>
       <div className={classes.post_header}>
         <Link
           className={classes.post_header_left}

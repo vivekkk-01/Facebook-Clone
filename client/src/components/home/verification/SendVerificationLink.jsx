@@ -22,12 +22,12 @@ const SendVerificationLink = ({ accessToken }) => {
     } catch (error) {
       setSuccess("");
       setError(
-        error.response.data
-          ? error.response.data
-          : error.response.data.message
-          ? error.response.data.message
-          : error.message
-          ? error.message
+        error?.response?.data
+          ? error?.response?.data
+          : error?.response?.data?.message
+          ? error?.response?.data?.message
+          : error?.message
+          ? error?.message
           : "Something went wrong, please try again!"
       );
     }

@@ -54,6 +54,24 @@ a {
   cursor: pointer;
 }
 
+.light_blue_btn {
+  border: none;
+  outline: none;
+  background: var(--light-blue-color);
+  padding: 8.5px 12px;
+  border-radius: 7px;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 14px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  color: var(--blue-color);
+}
+
 .gray_btn {
   border: none;
   outline: none;
@@ -122,3 +140,33 @@ a {
   font-size: 18px;
   font-weight: 600;
 }
+
+.small_circle {
+  position: absolute;
+  right: 16px;
+  top: 12px;
+  cursor: pointer;
+}
+
+.small_white_circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--bg-third);
+  background: var(--bg-secondary);
+  display: grid;
+  place-items: center;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  cursor: pointer;
+  z-index: 99;
+}
+
+/*----filters---*/
+.filter_blue {
+  filter: invert(39%) sepia(57%) saturate(200%) saturate(200%) saturate(200%)
+    saturate(200%) saturate(200%) saturate(147.75%) hue-rotate(202deg)
+    brightness(97%) contrast(96%);
+}
+/*----filters---*/

@@ -40,7 +40,7 @@ const Home = () => {
 
   return (
     <div className={classes.home} style={{ height: `${height}px` }}>
-      <Header />
+      <Header page="home" />
       <Left user={userInfo} />
       <div className={classes.home_middle} ref={middle}>
         <Stories />
