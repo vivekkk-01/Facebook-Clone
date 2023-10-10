@@ -17,6 +17,7 @@ const ImagePreview = ({
   const handleImagePick = (e) => {
     setImageFiles((prev) => [...prev, e.target.files[0]]);
     let files = Array.from(e.target.files);
+    if (!files) return;
     files.forEach((img) => {
       if (!img.type.startsWith("image")) {
         setError(`${img.name}'s file format is not supported!`);

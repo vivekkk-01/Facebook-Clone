@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import Picker from "emoji-picker-react";
+import { useMediaQuery } from "react-responsive";
 
 const EmojiPicker = ({
   classes,
@@ -15,6 +16,9 @@ const EmojiPicker = ({
   const [showBgs, setShowBgs] = useState(false);
   const bgRef = useRef();
   const textRef = useRef();
+  const sm = useMediaQuery({
+    query: "(max-width:550px)",
+  });
 
   useEffect(() => {
     textRef.current.selectionEnd = currentPosition;
@@ -62,7 +66,9 @@ const EmojiPicker = ({
           maxLength="250"
           value={text}
           placeholder={`What's on your mind, ${user.firstName}`}
-          className={`${classes.post_input} ${type2 ? "input2" : ""}`}
+          className={`${classes.post_input} ${type2 ? "input2" : ""} ${
+            sm && !background && classes.l0
+          }`}
           onChange={(e) => setText(e.target.value)}
         ></textarea>
       </div>

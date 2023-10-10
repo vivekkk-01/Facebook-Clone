@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   allImagesAction,
   getProfilePicturesAction,
+  resetProfilePicturesAction,
 } from "../../redux/actions/profileActions";
 const ProfilePicture = ({ classes, setShow }) => {
   const refInput = useRef(null);
@@ -14,6 +15,7 @@ const ProfilePicture = ({ classes, setShow }) => {
 
   const handleImage = (e) => {
     let file = e.target.files[0];
+    if (!file) return;
     if (
       file.type !== "image/jpeg" &&
       file.type !== "image/png" &&
@@ -45,12 +47,15 @@ const ProfilePicture = ({ classes, setShow }) => {
 
   useEffect(() => {
     dispatch(getProfilePicturesAction({ path, max }));
+    return () => {
+      dispatch(resetProfilePicturesAction());
+    };
   }, []);
 
   useClickOutside(boxRef, () => setShow(false));
 
   return (
-    <div className="blur_fixed">
+    <div className="blur_fixed" style={{ zIndex: 10000 }}>
       <input
         type="file"
         ref={refInput}

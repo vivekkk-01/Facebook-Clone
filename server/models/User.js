@@ -96,42 +96,52 @@ const userSchema = new Schema(
       bio: {
         type: String,
         trim: true,
+        default: "",
       },
       otherName: {
         type: String,
         trim: true,
+        default: "",
       },
       job: {
         type: String,
         trim: true,
+        default: "",
       },
       workplace: {
         type: String,
         trim: true,
+        default: "",
       },
       currentCity: {
         type: String,
         trim: true,
+        default: "",
       },
       homeTown: {
         type: String,
         trim: true,
+        default: "",
       },
       highSchool: {
         type: String,
         trim: true,
+        default: "",
       },
       college: {
         type: String,
         trim: true,
+        default: "",
       },
       relationship: {
         type: String,
-        enum: ["Single", "Divorced", "Married", "In a relationship"],
+        enum: ["Single", "Divorced", "Married", "In A Relationship", ""],
+        default: "",
       },
-      Instagram: {
+      instagram: {
         type: String,
         trim: true,
+        default: "",
       },
       savedPosts: [
         {

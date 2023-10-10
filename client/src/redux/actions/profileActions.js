@@ -1,5 +1,6 @@
 import Cookies from "js-cookie";
 import {
+  resetProfilePictures,
   resetUpdateProfilePic,
   setAllImages,
   setError,
@@ -10,6 +11,11 @@ import {
   setProfilePictures,
   setProfilePicturesError,
   setProfilePicturesLoading,
+  setUpdateDetails,
+  setUpdateDetailsError,
+  updateCoverPic,
+  updateCoverPicError,
+  updateCoverPicLoading,
   updateProfileInfo,
 } from "../slices/profileSlice";
 import axios from "axios";
@@ -68,7 +74,7 @@ export const allImagesAction =
   };
 
 export const getProfilePicturesAction =
-  ({ path, sort, max }) =>
+  ({ path, max, sort }) =>
   async (dispatch) => {
     const { accessToken } = JSON.parse(Cookies.get("user"));
     dispatch(setProfilePicturesLoading());
@@ -95,6 +101,10 @@ export const getProfilePicturesAction =
     }
   };
 
+export const resetProfilePicturesAction = () => (dispatch) => {
+  dispatch(resetProfilePictures());
+};
+
 export const profilePictureAction = (formData) => async (dispatch) => {
   const { accessToken } = JSON.parse(Cookies.get("user"));
   dispatch(setLoading());
@@ -119,6 +129,59 @@ export const profilePictureAction = (formData) => async (dispatch) => {
       ? error?.message
       : "Something went wrong, please try again!";
     dispatch(setError(err));
+  }
+};
+
+export const coverPictureAction = (formData) => async (dispatch) => {
+  const { accessToken } = JSON.parse(Cookies.get("user"));
+  dispatch(updateCoverPicLoading());
+  try {
+    const { data } = await axios.put(
+      `${process.env.REACT_APP_SERVER_ROUTE}/user/update-cover-picture`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    dispatch(updateCoverPic(data));
+  } catch (error) {
+    const err = error?.response?.data
+      ? error?.response?.data
+      : error?.response?.data?.message
+      ? error?.response?.data?.message
+      : error?.message
+      ? error?.message
+      : "Something went wrong, please try again!";
+    dispatch(updateCoverPicError(err));
+  }
+};
+
+export const updateDetailsAction = (details) => async (dispatch) => {
+  const { accessToken } = JSON.parse(Cookies.get("user"));
+  try {
+    const { data } = await axios.put(
+      `${process.env.REACT_APP_SERVER_ROUTE}/user/update-details`,
+      { details },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    dispatch(setUpdateDetails(data));
+  } catch (error) {
+    const err = error?.response?.data
+      ? error?.response?.data
+      : error?.response?.data?.message
+      ? error?.response?.data?.message
+      : error?.message
+      ? error?.message
+      : "Something went wrong, please try again!";
+    dispatch(setUpdateDetailsError(err));
   }
 };
 

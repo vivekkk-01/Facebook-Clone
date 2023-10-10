@@ -71,7 +71,7 @@ const UpdateProfilePicture = ({
       {error ? (
         <div
           className={`${classes.postBox}`}
-          style={{ height: "450px", width: "700px", overflow: "hidden" }}
+          style={{ height: "400px", width: "700px", overflow: "hidden" }}
         >
           <div className={`${classes.postError} ${classes.comment_error}`}>
             <h2 className={classes.postError_error}>{error}</h2>
@@ -87,7 +87,10 @@ const UpdateProfilePicture = ({
           </div>
         </div>
       ) : (
-        <div className={`${classes.postBox} ${classes.update_img}`}>
+        <div
+          style={{ height: "550px " }}
+          className={`${classes.postBox} ${classes.update_img}`}
+        >
           <div className={classes.box_header}>
             <div className="small_circle" onClick={() => setImage("")}>
               <i className="exit_icon"></i>

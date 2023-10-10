@@ -24,6 +24,7 @@ const CreateComment = ({ user, classes }) => {
   };
   const handleImage = (e) => {
     let file = e.target.files[0];
+    if (!file) return;
     if (
       file.type !== "image/jpeg" &&
       file.type !== "image/png" &&

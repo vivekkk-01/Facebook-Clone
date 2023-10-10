@@ -43,8 +43,11 @@ const Post = ({ post, user, profile }) => {
             </div>
           </div>
         </Link>
-        <div className={`${classes.dots} hover2`} ref={menu}>
-          <div onClick={() => setShowMenu((prev) => !prev)}>
+        <div ref={menu}>
+          <div
+            className={`${classes.dots} hover2`}
+            onClick={() => setShowMenu((prev) => !prev)}
+          >
             <Dots color="#828387" />
           </div>
           {showMenu && (

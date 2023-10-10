@@ -274,9 +274,7 @@ exports.getAllImages = async (req, res) => {
 
 exports.updateProfilePicture = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select(
-      "-password"
-    );
+    const user = await User.findById(req.user._id).select("-password");
     const { path: imagePath } = req.body;
     const filePath = path.join(
       `public/uploads/profilePicture/${req.file.filename}`
@@ -294,6 +292,50 @@ exports.updateProfilePicture = async (req, res) => {
     });
     const posts = await Post.find({ user: user._id }).populate("user");
     return res.json({ ...user.toObject(), posts });
+  } catch (error) {
+    return res
+      .status(error.code || 500)
+      .json(error.message || "Something went wrong, please try again!");
+  }
+};
+
+exports.updateCoverPicture = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select("-password");
+    const { path: imagePath } = req.body;
+    const filePath = path.join(
+      `public/uploads/coverPicture/${req.file.filename}`
+    );
+    const { secure_url } = await cloudinary.v2.uploader.upload(filePath, {
+      folder: imagePath ? imagePath : null,
+    });
+
+    user.cover = secure_url;
+    await user.save();
+    unlink(filePath, (err) => {
+      if (err) {
+        throw err;
+      }
+    });
+    const posts = await Post.find({ user: user._id }).populate("user");
+    return res.json({ ...user.toObject(), posts });
+  } catch (error) {
+    return res
+      .status(error.code || 500)
+      .json(error.message || "Something went wrong, please try again!");
+  }
+};
+
+exports.updateDetails = async (req, res) => {
+  try {
+    const { details } = req.body;
+    const { _id } = req.user;
+    const updated = await User.findByIdAndUpdate(
+      _id,
+      { details },
+      { new: true }
+    );
+    return res.json(updated.details);
   } catch (error) {
     return res
       .status(error.code || 500)

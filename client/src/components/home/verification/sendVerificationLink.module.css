@@ -60,3 +60,10 @@
     width: 100%;
   }
 }
+
+@media (max-width: 400px) {
+  .send_verification {
+    margin: 0 auto;
+    width: 98%;
+  }
+}

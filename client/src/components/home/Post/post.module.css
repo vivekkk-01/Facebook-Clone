@@ -528,3 +528,35 @@
     height: 450px !important;
   }
 }
+
+@media (max-width: 400px) {
+  .post {
+    margin: 1rem auto;
+    margin-top: 1rem;
+    width: 98%;
+  }
+  .post input {
+    width: 30vw;
+  }
+  .post_profile_name {
+    font-size: 12px !important;
+    width: 200px !important;
+  }
+  .post_profile_privacy_date {
+    gap: 10px;
+  }
+  .post_header_left {
+    width: 35px !important;
+    height: 35px !important;
+  }
+  .reacts_popup {
+    top: -3rem;
+  }
+  .react img {
+    width: 32px;
+    height: 32px;
+  }
+  .comment_input_wrap input {
+    font-size: 12px;
+  }
+}

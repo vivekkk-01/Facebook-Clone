@@ -15,7 +15,7 @@ const SearchMenu = ({ classes, color, setShowSearchMenu }) => {
   return (
     <div
       ref={menuRef}
-      className={`${classes.header_left} ${classes.search_area} ${classes.scrollbar}`}
+      className={`${classes.header_left} ${classes.search_area} scrollbar`}
     >
       <div className={classes.search_wrap}>
         <div className={classes.header_logo}>

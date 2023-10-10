@@ -91,3 +91,14 @@
     width: 20px;
   }
 }
+
+@media (max-width: 400px) {
+  .createPost {
+    margin: 1rem auto;
+    margin-top: 1rem;
+    width: 98%;
+  }
+  .createPost_body {
+    padding: 5px 0;
+  }
+}

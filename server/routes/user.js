@@ -13,6 +13,8 @@ const {
   getProfile,
   getAllImages,
   updateProfilePicture,
+  updateCoverPicture,
+  updateDetails,
 } = require("../controllers/user");
 
 const auth = require("../middlewares/auth.");
@@ -20,6 +22,7 @@ const auth = require("../middlewares/auth.");
 const {
   uploadImage,
   validateProfilePicture,
+  validateCoverPicture,
 } = require("../middlewares/imageUpload");
 
 router.post(
@@ -75,5 +78,15 @@ router.put(
   validateProfilePicture,
   updateProfilePicture
 );
+
+router.put(
+  "/update-cover-picture",
+  auth,
+  uploadImage.single("image"),
+  validateCoverPicture,
+  updateCoverPicture
+);
+
+router.put("/update-details", auth, updateDetails);
 
 module.exports = router;

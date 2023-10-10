@@ -12,6 +12,9 @@ const initialState = {
   profilePicturesLoading: false,
   profilePicturesError: null,
   profilePictures: null,
+  coverPictureLoading: false,
+  coverPictureError: null,
+  updateDetailsError: null,
 };
 
 const profileSlice = createSlice({
@@ -52,6 +55,11 @@ const profileSlice = createSlice({
       state.profilePictures = null;
       state.profilePicturesError = payload;
     },
+    resetProfilePictures: (state) => {
+      state.profilePicturesLoading = false;
+      state.profilePictures = null;
+      state.profilePicturesError = null;
+    },
     updateProfileInfo: (state, { payload }) => {
       const { profile, accessToken } = payload;
       state.loading = false;
@@ -79,6 +87,24 @@ const profileSlice = createSlice({
       state.updatedProfilePic = false;
       state.error = null;
     },
+    updateCoverPicLoading: (state) => {
+      state.coverPictureLoading = true;
+    },
+    updateCoverPic: (state, { payload }) => {
+      state.coverPictureLoading = false;
+      state.profileInfo = payload;
+      state.coverPictureError = null;
+    },
+    updateCoverPicError: (state, { payload }) => {
+      state.coverPictureLoading = false;
+      state.coverPictureError = payload;
+    },
+    setUpdateDetails: (state, { payload }) => {
+      state.profileInfo = { ...state.profileInfo, details: payload };
+    },
+    setUpdateDetailsError: (state, { payload }) => {
+      state.updateDetailsError = payload;
+    },
     setError: (state, { payload }) => {
       state.loading = false;
       state.profileInfo = null;
@@ -97,7 +123,13 @@ export const {
   setProfilePicturesLoading,
   setProfilePictures,
   setProfilePicturesError,
+  resetProfilePictures,
   updateProfileInfo,
   resetUpdateProfilePic,
+  updateCoverPicLoading,
+  updateCoverPic,
+  updateCoverPicError,
+  setUpdateDetails,
+  setUpdateDetailsError,
   setError,
 } = profileSlice.actions;

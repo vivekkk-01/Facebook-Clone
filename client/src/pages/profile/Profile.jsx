@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import store from "../../redux/store";
 import { redirect, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,6 +15,7 @@ import Post from "../../components/home/Post/Post";
 import Photos from "../../components/profile/Photos";
 import Friends from "../../components/profile/Friends";
 import ClipLoader from "react-spinners/ClipLoader";
+import Intro from "../../components/profile/Intro";
 
 const Profile = () => {
   const { username } = useParams();
@@ -27,6 +28,8 @@ const Profile = () => {
   useEffect(() => {
     dispatch(profileAction(username));
   }, [username, dispatch]);
+
+  const profileTop = useRef();
 
   return (
     <>
@@ -79,6 +82,11 @@ const Profile = () => {
                 <PplYouMayKnow classes={classes} />
                 <div className={classes.profile_grid}>
                   <div className={classes.profile_left}>
+                    <Intro
+                      ownProfile={ownProfile}
+                      details={profileInfo?.details}
+                      classes={classes}
+                    />
                     <Photos classes={classes} username={username} />
                     <Friends classes={classes} friends={userInfo?.friends} />
                   </div>

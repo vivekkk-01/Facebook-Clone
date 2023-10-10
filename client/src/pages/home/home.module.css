@@ -51,6 +51,22 @@
   }
 }
 
+@media (max-width: 400px) {
+  .posts {
+    width: 100%;
+    margin: 0 auto;
+  }
+  .home_middle {
+    margin: 1rem auto;
+    margin-top: 1rem;
+    width: 98%;
+  }
+  .home_middle {
+    margin: 56px auto;
+  }
+  
+}
+
 /*-----Activate popup----*/
 .popup {
   position: relative;

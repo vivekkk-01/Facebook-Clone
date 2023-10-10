@@ -1,9 +1,10 @@
 import { useState } from "react";
 import ProfilePicture from "./ProfilePicture";
+import { useSelector } from "react-redux";
 
 const ProfilePictureInfos = ({ profile, classes, ownProfile }) => {
   const [show, setShow] = useState(false);
-
+  const { profileInfo } = useSelector((state) => state.profile);
   return (
     <div className={classes.profile_img_wrap}>
       {show ? <ProfilePicture classes={classes} setShow={setShow} /> : null}
@@ -28,7 +29,11 @@ const ProfilePictureInfos = ({ profile, classes, ownProfile }) => {
         <div className={classes.profile_w_col}>
           <div className={classes.profile_name}>
             {profile?.first_name} {profile?.last_name}
-            <p className={classes.othername}>(Othername)</p>
+            <p className={classes.othername}>
+              {profileInfo?.details?.otherName
+                ? `(${profileInfo?.details?.otherName})`
+                : ""}
+            </p>
           </div>
           <div className={classes.profile_friend_count}></div>
           <div className={classes.profile_friend_imgs}></div>

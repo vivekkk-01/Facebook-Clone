@@ -58,4 +58,30 @@ const validateProfilePicture = async (req, res, next) => {
   next();
 };
 
-module.exports = { uploadImage, validatePostImages, validateProfilePicture };
+const validateCoverPicture = async (req, res, next) => {
+  if (!req.file.mimetype.startsWith("image"))
+    return res.status(403).json("Please provide an image.");
+
+  if (req.file.size > 5000000)
+    return res.status(403).json("Image size is too large.");
+
+  req.file.filename = `cover-${Date.now()}-${req.file.originalname}`;
+
+  fs.writeFile(
+    path.join(`public/uploads/coverPicture/${req.file.filename}`),
+    req.file.buffer,
+    (err) => {
+      if (err) {
+        next(err);
+      }
+    }
+  );
+  next();
+};
+
+module.exports = {
+  uploadImage,
+  validatePostImages,
+  validateProfilePicture,
+  validateCoverPicture,
+};

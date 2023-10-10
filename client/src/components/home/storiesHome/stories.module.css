@@ -162,3 +162,10 @@
     height: 30vw;
   }
 }
+
+@media (max-width: 400px) {
+  .stories {
+    grid-template-columns: repeat(6, 13vw);
+    padding-left: 10px;
+  }
+}
