@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const Friends = ({ friends, classes }) => {
   return (
     <div className={classes.profile_card}>
@@ -14,10 +16,17 @@ const Friends = ({ friends, classes }) => {
       </div>
       <div className={classes.profile_card_grid}>
         {friends?.length > 0 &&
-          friends?.slice(0, 9).map((img) => (
-            <div className={classes.profile_photo_card} key={img.public_id}>
-              <img src={img.secure_url} alt="" />
-            </div>
+          friends?.slice(0, 9).map((friend) => (
+            <Link
+              to={`/profile/${friend.username}`}
+              className={classes.profile_photo_card}
+              key={friend._id}
+            >
+              <img style={{ objectFit: "cover" }} src={friend.picture} alt="" />
+              <span>
+                {friend.first_name} {friend.last_name}
+              </span>
+            </Link>
           ))}
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import ProfilePicture from "./ProfilePicture";
 import { useSelector } from "react-redux";
+import Relation from "./Relation";
 
 const ProfilePictureInfos = ({ profile, classes, ownProfile }) => {
   const [show, setShow] = useState(false);
@@ -54,7 +55,13 @@ const ProfilePictureInfos = ({ profile, classes, ownProfile }) => {
             <span>Edit profile</span>
           </div>
         </div>
-      ) : null}
+      ) : (
+        <Relation
+          classes={classes}
+          relation={profile?.relation}
+          profileId={profile?._id}
+        />
+      )}
     </div>
   );
 };

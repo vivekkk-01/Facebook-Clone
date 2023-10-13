@@ -14,6 +14,8 @@ const initialState = {
   profilePictures: null,
   coverPictureLoading: false,
   coverPictureError: null,
+  relationshipLoading: false,
+  relationshipError: null,
   updateDetailsError: null,
 };
 
@@ -105,6 +107,17 @@ const profileSlice = createSlice({
     setUpdateDetailsError: (state, { payload }) => {
       state.updateDetailsError = payload;
     },
+    setRelationshipLoading: (state) => {
+      state.relationshipLoading = true;
+    },
+    setRelationship: (state) => {
+      state.relationshipLoading = false;
+      state.relationshipError = null;
+    },
+    setRelationshipError: (state, { payload }) => {
+      state.relationshipLoading = false;
+      state.relationshipError = payload;
+    },
     setError: (state, { payload }) => {
       state.loading = false;
       state.profileInfo = null;
@@ -131,5 +144,8 @@ export const {
   updateCoverPicError,
   setUpdateDetails,
   setUpdateDetailsError,
+  setRelationshipLoading,
+  setRelationship,
+  setRelationshipError,
   setError,
 } = profileSlice.actions;

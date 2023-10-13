@@ -241,9 +241,26 @@ exports.getProfile = async (req, res) => {
   try {
     const { username } = req.params;
     const profile = await User.findOne({ username }).select("-password");
+    const me = await User.findById(req.user._id);
+    const ifItsMe = profile._id.toString() === me._id.toString();
+    const relation = {
+      friends: false,
+      following: false,
+      requestSent: false,
+      requestReceived: false,
+    };
+
+    if (!ifItsMe) {
+      if (profile.friends.includes(me._id) && me.friends.includes(profile._id))
+        relation.friends = true;
+      if (me.followings.includes(profile._id)) relation.following = true;
+      if (profile.requests.includes(me._id)) relation.requestSent = true;
+      if (me.requests.includes(profile._id)) relation.requestReceived = true;
+    }
     const posts = await Post.find({ user: profile._id }).populate("user");
     if (!profile) return res.status(403).json("Profile Not Found!");
-    return res.json({ ...profile.toObject(), posts });
+    await profile.populate("friends", "last_name first_name username picture");
+    return res.json({ ...profile.toObject(), posts, relation });
   } catch (error) {
     return res
       .status(error.code || 500)
@@ -336,6 +353,215 @@ exports.updateDetails = async (req, res) => {
       { new: true }
     );
     return res.json(updated.details);
+  } catch (error) {
+    return res
+      .status(error.code || 500)
+      .json(error.message || "Something went wrong, please try again!");
+  }
+};
+
+exports.addRequest = async (req, res) => {
+  try {
+    if (req.params.id.toString() === req.user._id.toString()) {
+      return res
+        .status(400)
+        .json("You couldn't send a friend request to yourself!");
+    }
+    const receiver = await User.findById(req.params.id);
+    const sender = await User.findById(req.user._id);
+    if (receiver.friends.includes(sender._id))
+      return res
+        .status(400)
+        .json(`${receiver.first_name} is already in your friends list!`);
+    if (receiver.requests.includes(sender._id))
+      return res.status(400).json("Request already sent!");
+    await receiver.updateOne({ $push: { requests: sender._id } });
+    await receiver.updateOne({ $push: { followers: sender._id } });
+    await sender.updateOne({ $push: { followings: receiver._id } });
+    return res.json("Friend request sent successfully.");
+  } catch (error) {
+    return res
+      .status(error.code || 500)
+      .json(error.message || "Something went wrong, please try again!");
+  }
+};
+
+exports.cancelRequest = async (req, res) => {
+  try {
+    if (req.params.id.toString() === req.user._id.toString()) {
+      return res.status(400).json("Error!");
+    }
+    const receiver = await User.findById(req.params.id);
+    const sender = await User.findById(req.user._id);
+    if (
+      !receiver.followers.includes(sender._id) &&
+      !sender.followings.includes(receiver._id)
+    )
+      return res.status(400).json(`Error cancelling the request!`);
+    if (!receiver.requests.includes(sender._id))
+      return res.status(400).json("Error cancelling  the request!");
+    await receiver.updateOne({ $pull: { requests: sender._id } });
+    await receiver.updateOne({ $pull: { followers: sender._id } });
+    await sender.updateOne({ $pull: { followings: receiver._id } });
+    return res.json("Friend request cancelled successfully.");
+  } catch (error) {
+    return res
+      .status(error.code || 500)
+      .json(error.message || "Something went wrong, please try again!");
+  }
+};
+
+exports.follow = async (req, res) => {
+  try {
+    if (req.params.id.toString() === req.user._id.toString()) {
+      return res.status(400).json("You can't follow yourself!");
+    }
+    const receiver = await User.findById(req.params.id);
+    const sender = await User.findById(req.user._id);
+    if (receiver.requests.includes(sender._id))
+      return res.status(400).json("Error while accepting the request!");
+
+    if (
+      receiver.followers.includes(sender._id) &&
+      sender.followings.includes(receiver._id)
+    ) {
+      return res.status(400).json(`You already follow ${receiver.first_name}`);
+    }
+    await receiver.updateOne({ $push: { followers: sender._id } });
+    await sender.updateOne({ $push: { followings: receiver._id } });
+    return res.json(`You successfully followed ${receiver.first_name}.`);
+  } catch (error) {
+    return res
+      .status(error.code || 500)
+      .json(error.message || "Something went wrong, please try again!");
+  }
+};
+
+exports.unFollow = async (req, res) => {
+  try {
+    if (req.params.id.toString() === req.user._id.toString()) {
+      return res.status(400).json("You can't un-follow yourself!");
+    }
+    const receiver = await User.findById(req.params.id);
+    const sender = await User.findById(req.user._id);
+    if (
+      !receiver.followers.includes(sender._id) &&
+      !sender.followings.includes(receiver._id)
+    ) {
+      return res.status(400).json(`Error!`);
+    }
+    await receiver.updateOne({ $pull: { followers: sender._id } });
+    await sender.updateOne({ $pull: { followings: receiver._id } });
+    return res.json(`You successfully un-followed ${receiver.first_name}.`);
+  } catch (error) {
+    return res
+      .status(error.code || 500)
+      .json(error.message || "Something went wrong, please try again!");
+  }
+};
+
+exports.acceptRequest = async (req, res) => {
+  try {
+    if (req.params.id.toString() === req.user._id.toString()) {
+      return res.status(400).json("Error while accepting the request!");
+    }
+    const receiver = await User.findById(req.user._id);
+    const sender = await User.findById(req.params.id);
+    if (
+      receiver.friends.includes(sender._id) &&
+      sender.friends.includes(receiver._id)
+    )
+      return res
+        .status(400)
+        .json(`${sender.first_name} is already in your friends list!`);
+
+    await receiver.updateOne({
+      $push: { followings: sender._id, friends: sender._id },
+    });
+    await receiver.updateOne({
+      $pull: { requests: sender._id },
+    });
+
+    await sender.updateOne({
+      $push: { followers: receiver._id, friends: receiver._id },
+    });
+
+    return res.json(
+      `You successfully accepted ${receiver.first_name}'s request.`
+    );
+  } catch (error) {
+    return res
+      .status(error.code || 500)
+      .json(error.message || "Something went wrong, please try again!");
+  }
+};
+
+exports.unFriend = async (req, res) => {
+  try {
+    if (req.params.id.toString() === req.user._id.toString()) {
+      return res.status(400).json("Error while un-friending!");
+    }
+    const rejecter = await User.findById(req.user._id);
+    const friend = await User.findById(req.params.id);
+    if (
+      !rejecter.friends.includes(friend._id) &&
+      !friend.friends.includes(rejecter._id)
+    )
+      return res
+        .status(400)
+        .json(`${friend.first_name} is not in your friends list!`);
+
+    await rejecter.updateOne({
+      $pull: {
+        followings: friend._id,
+        followers: friend._id,
+        friends: friend._id,
+      },
+    });
+
+    await friend.updateOne({
+      $pull: {
+        followers: rejecter._id,
+        followings: rejecter._id,
+        friends: rejecter._id,
+      },
+    });
+
+    return res.json(`You successfully un-friended ${friend.first_name}.`);
+  } catch (error) {
+    return res
+      .status(error.code || 500)
+      .json(error.message || "Something went wrong, please try again!");
+  }
+};
+
+exports.rejectRequest = async (req, res) => {
+  try {
+    if (req.params.id.toString() === req.user._id.toString()) {
+      return res.status(400).json("Error while rejecting the request!");
+    }
+    const rejecter = await User.findById(req.user._id);
+    const sender = await User.findById(req.params.id);
+
+    if (!rejecter.requests.includes(sender._id))
+      return res.status(400).json(`${sender.first_name} didn't request you!`);
+
+    await rejecter.updateOne({
+      $pull: {
+        requests: sender._id,
+        followers: sender._id,
+      },
+    });
+
+    await sender.updateOne({
+      $pull: {
+        followings: rejecter._id,
+      },
+    });
+
+    return res.json(
+      `You successfully rejected ${sender.first_name}'s request.`
+    );
   } catch (error) {
     return res
       .status(error.code || 500)

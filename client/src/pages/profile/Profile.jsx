@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import store from "../../redux/store";
 import { redirect, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -28,8 +28,6 @@ const Profile = () => {
   useEffect(() => {
     dispatch(profileAction(username));
   }, [username, dispatch]);
-
-  const profileTop = useRef();
 
   return (
     <>
@@ -88,7 +86,7 @@ const Profile = () => {
                       classes={classes}
                     />
                     <Photos classes={classes} username={username} />
-                    <Friends classes={classes} friends={userInfo?.friends} />
+                    <Friends classes={classes} friends={profileInfo?.friends} />
                   </div>
                   <div className={classes.profile_right}>
                     {ownProfile ? <CreatePost user={userInfo} /> : null}

@@ -11,6 +11,9 @@ import {
   setProfilePictures,
   setProfilePicturesError,
   setProfilePicturesLoading,
+  setRelationship,
+  setRelationshipError,
+  setRelationshipLoading,
   setUpdateDetails,
   setUpdateDetailsError,
   updateCoverPic,
@@ -187,4 +190,193 @@ export const updateDetailsAction = (details) => async (dispatch) => {
 
 export const resetUpdateProfilePicAction = () => (dispatch) => {
   dispatch(resetUpdateProfilePic());
+};
+
+export const addFriendAction = (profileId) => async (dispatch) => {
+  const { accessToken } = JSON.parse(Cookies.get("user"));
+  dispatch(setRelationshipLoading());
+  try {
+    await axios.put(
+      `${process.env.REACT_APP_SERVER_ROUTE}/user/add-friend/${profileId}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    dispatch(setRelationship());
+  } catch (error) {
+    const err = error?.response?.data
+      ? error?.response?.data
+      : error?.response?.data?.message
+      ? error?.response?.data?.message
+      : error?.message
+      ? error?.message
+      : "Something went wrong, please try again!";
+    dispatch(setRelationshipError(err));
+  }
+};
+
+export const cancelRequestAction = (profileId) => async (dispatch) => {
+  const { accessToken } = JSON.parse(Cookies.get("user"));
+  dispatch(setRelationshipLoading());
+  try {
+    await axios.put(
+      `${process.env.REACT_APP_SERVER_ROUTE}/user/cancel-friend/${profileId}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    dispatch(setRelationship());
+  } catch (error) {
+    const err = error?.response?.data
+      ? error?.response?.data
+      : error?.response?.data?.message
+      ? error?.response?.data?.message
+      : error?.message
+      ? error?.message
+      : "Something went wrong, please try again!";
+    dispatch(setRelationshipError(err));
+  }
+};
+
+export const followAction = (profileId) => async (dispatch) => {
+  const { accessToken } = JSON.parse(Cookies.get("user"));
+  dispatch(setRelationshipLoading());
+  try {
+    await axios.put(
+      `${process.env.REACT_APP_SERVER_ROUTE}/user/follow/${profileId}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    dispatch(setRelationship());
+  } catch (error) {
+    const err = error?.response?.data
+      ? error?.response?.data
+      : error?.response?.data?.message
+      ? error?.response?.data?.message
+      : error?.message
+      ? error?.message
+      : "Something went wrong, please try again!";
+    dispatch(setRelationshipError(err));
+  }
+};
+
+export const unFollowAction = (profileId) => async (dispatch) => {
+  const { accessToken } = JSON.parse(Cookies.get("user"));
+  dispatch(setRelationshipLoading());
+  try {
+    await axios.put(
+      `${process.env.REACT_APP_SERVER_ROUTE}/user/un-follow/${profileId}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    dispatch(setRelationship());
+  } catch (error) {
+    const err = error?.response?.data
+      ? error?.response?.data
+      : error?.response?.data?.message
+      ? error?.response?.data?.message
+      : error?.message
+      ? error?.message
+      : "Something went wrong, please try again!";
+    dispatch(setRelationshipError(err));
+  }
+};
+
+export const acceptRequestAction = (profileId) => async (dispatch) => {
+  const { accessToken } = JSON.parse(Cookies.get("user"));
+  dispatch(setRelationshipLoading());
+  try {
+    await axios.put(
+      `${process.env.REACT_APP_SERVER_ROUTE}/user/accept-request/${profileId}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    dispatch(setRelationship());
+  } catch (error) {
+    const err = error?.response?.data
+      ? error?.response?.data
+      : error?.response?.data?.message
+      ? error?.response?.data?.message
+      : error?.message
+      ? error?.message
+      : "Something went wrong, please try again!";
+    dispatch(setRelationshipError(err));
+  }
+};
+
+export const unFriendAction = (profileId) => async (dispatch) => {
+  const { accessToken } = JSON.parse(Cookies.get("user"));
+  dispatch(setRelationshipLoading());
+  try {
+    await axios.put(
+      `${process.env.REACT_APP_SERVER_ROUTE}/user/un-friend/${profileId}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    dispatch(setRelationship());
+  } catch (error) {
+    const err = error?.response?.data
+      ? error?.response?.data
+      : error?.response?.data?.message
+      ? error?.response?.data?.message
+      : error?.message
+      ? error?.message
+      : "Something went wrong, please try again!";
+    dispatch(setRelationshipError(err));
+  }
+};
+
+export const rejectRequestAction = (profileId) => async (dispatch) => {
+  const { accessToken } = JSON.parse(Cookies.get("user"));
+  dispatch(setRelationshipLoading());
+  try {
+    await axios.put(
+      `${process.env.REACT_APP_SERVER_ROUTE}/user/reject-request/${profileId}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    dispatch(setRelationship());
+  } catch (error) {
+    const err = error?.response?.data
+      ? error?.response?.data
+      : error?.response?.data?.message
+      ? error?.response?.data?.message
+      : error?.message
+      ? error?.message
+      : "Something went wrong, please try again!";
+    dispatch(setRelationshipError(err));
+  }
 };
