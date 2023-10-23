@@ -1,6 +1,8 @@
 const Post = require("../models/Post");
+const React = require("../models/React");
 const cloudinary = require("cloudinary");
 const { unlink } = require("fs");
+const mongoose = require("mongoose");
 const path = require("path");
 
 cloudinary.v2.config({
@@ -46,6 +48,98 @@ exports.getAllPosts = async (req, res) => {
       .populate("user", "first_name last_name picture gender username")
       .sort({ createdAt: -1 });
     return res.json(posts);
+  } catch (error) {
+    return res
+      .status(error.code || 500)
+      .json(error.message || "Something went wrong, please try again!");
+  }
+};
+
+exports.reactPost = async (req, res) => {
+  try {
+    const { postId, react } = req.body;
+    const check = await React.findOne({
+      postRef: postId,
+      reactBy: req.user._id,
+    });
+    if (check == null) {
+      const newReact = new React({
+        postRef: postId,
+        reactBy: req.user._id,
+        react,
+      });
+      await newReact.save();
+      return res.json("React created successfully!");
+    } else {
+      if (check.react === react) {
+        await React.findByIdAndRemove(check._id);
+        return res.json("React deleted successfully!");
+      } else {
+        await React.findByIdAndUpdate(check._id, { react });
+        return res.json("React updated successfully!");
+      }
+    }
+  } catch (error) {
+    return res
+      .status(error.code || 500)
+      .json(error.message || "Something went wrong, please try again!");
+  }
+};
+
+exports.getReacts = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const reactsArray = await React.find({ postRef: postId });
+    const reacted = await React.findOne({
+      postRef: postId,
+      reactBy: req.user._id,
+    });
+
+    const newReacts = reactsArray.reduce((group, react) => {
+      let key = react["react"];
+      group[key] = group[key] || [];
+      group[key].push(react);
+      return group;
+    }, {});
+    const reacts = [
+      {
+        react: "like",
+        count: newReacts.like?.length ? newReacts.like?.length : 0,
+      },
+      {
+        react: "haha",
+        count: newReacts.haha?.length ? newReacts.haha?.length : 0,
+      },
+      {
+        react: "sad",
+        count: newReacts.sad?.length ? newReacts.sad?.length : 0,
+      },
+      {
+        react: "wow",
+        count: newReacts.wow?.length ? newReacts.wow?.length : 0,
+      },
+      {
+        react: "angry",
+        count: newReacts.angry?.length ? newReacts.angry?.length : 0,
+      },
+      {
+        react: "love",
+        count: newReacts.love?.length ? newReacts.love?.length : 0,
+      },
+    ];
+    reacts.sort((a, b) => {
+      return b.count - a.count;
+    });
+
+    if (reacted == null) {
+      return res.json({ reacts, total: reactsArray.length });
+    } else {
+      return res.json({
+        reacts,
+        reacted: reacted.react,
+        total: reactsArray.length,
+      });
+    }
   } catch (error) {
     return res
       .status(error.code || 500)

@@ -1,5 +1,12 @@
 import axios from "axios";
-import { setAllPosts, setError, setLoading } from "../slices/postSlice";
+import {
+  setAllPosts,
+  setError,
+  setLoading,
+  setReactPost,
+  setReactPostError,
+  setReactPostLoading,
+} from "../slices/postSlice";
 import Cookies from "js-cookie";
 
 export const getPostsActions = () => async (dispatch) => {
@@ -24,5 +31,31 @@ export const getPostsActions = () => async (dispatch) => {
       ? error?.message
       : "Something went wrong, please try again!";
     dispatch(setError(err));
+  }
+};
+
+export const reactPostAction = (react, postId) => async (dispatch) => {
+  const { accessToken } = JSON.parse(Cookies.get("user"));
+  try {
+    dispatch(setReactPostLoading());
+    await axios.put(
+      `${process.env.REACT_APP_SERVER_ROUTE}/post/react-post`,
+      { react, postId },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    dispatch(setReactPost());
+  } catch (error) {
+    const err = error?.response?.data
+      ? error?.response?.data
+      : error?.response?.data?.message
+      ? error?.response?.data?.message
+      : error?.message
+      ? error?.message
+      : "Something went wrong, please try again!";
+    dispatch(setReactPostError(err));
   }
 };

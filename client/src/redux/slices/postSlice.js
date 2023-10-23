@@ -4,6 +4,8 @@ const initialState = {
   allPosts: [],
   loading: false,
   error: null,
+  reactPostLoading: false,
+  reactPostError: null,
 };
 
 const postSlice = createSlice({
@@ -18,6 +20,17 @@ const postSlice = createSlice({
       state.error = null;
       state.allPosts = payload;
     },
+    setReactPostLoading: (state) => {
+      state.reactPostLoading = true;
+    },
+    setReactPost: (state) => {
+      state.reactPostLoading = false;
+      state.reactPostError = null;
+    },
+    setReactPostError: (state, { payload }) => {
+      state.reactPostLoading = false;
+      state.reactPostError = payload;
+    },
     setError: (state, { payload }) => {
       state.loading = false;
       state.error = payload;
@@ -26,4 +39,11 @@ const postSlice = createSlice({
 });
 
 export default postSlice.reducer;
-export const { setAllPosts, setLoading, setError } = postSlice.actions;
+export const {
+  setAllPosts,
+  setLoading,
+  setReactPost,
+  setReactPostError,
+  setReactPostLoading,
+  setError,
+} = postSlice.actions;

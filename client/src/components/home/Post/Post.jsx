@@ -7,12 +7,105 @@ import ReactsPopup from "./ReactsPopup";
 import CreateComment from "./CreateComment";
 import PostMenu from "./PostMenu";
 import useClickOutside from "../../../hooks/useClickOutside";
+import { useEffect } from "react";
+import Cookies from "js-cookie";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { reactPostAction } from "../../../redux/actions/postActions";
 
 const Post = ({ post, user, profile }) => {
   const [visible, setVisible] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [reacted, setReacted] = useState("");
+  const [reacts, setReacts] = useState([]);
+  const [totalReacts, setTotalReacts] = useState(0);
+
   const menu = useRef(null);
   useClickOutside(menu, () => setShowMenu(false));
+  useEffect(() => {
+    const { accessToken } = JSON.parse(Cookies.get("user"));
+    (async () => {
+      const { data } = await axios.get(
+        `${process.env.REACT_APP_SERVER_ROUTE}/post/get-reacts/${post._id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      setReacts(data.reacts);
+      setTotalReacts(data.total);
+      if (data.reacted) {
+        setReacted(data.reacted);
+      }
+    })();
+  }, [post]);
+
+  const dispatch = useDispatch();
+  const reactHandler = (type) => {
+    if (type === "" && reacted === "") {
+      return;
+    }
+    if (type === "" && reacted !== "") {
+      dispatch(reactPostAction(reacted, post._id));
+      let index = reacts.findIndex((item) => item.react === reacted);
+      if (index !== -1) {
+        const newReacts = [
+          ...reacts,
+          (reacts[index].count = --reacts[index].count),
+        ];
+        const reactsArray = newReacts.sort((a, b) => {
+          return b.count - a.count;
+        });
+        setReacts(reactsArray);
+        setTotalReacts((prev) => --prev);
+      }
+    } else {
+      dispatch(reactPostAction(type, post._id));
+    }
+    if (type.trim() === reacted.trim()) {
+      setReacted("");
+      let index = reacts.findIndex((item) => item.react === type);
+      if (index !== -1) {
+        const newReacts = [
+          ...reacts,
+          (reacts[index].count = --reacts[index].count),
+        ];
+        const reactsArray = newReacts.sort((a, b) => {
+          return b.count - a.count;
+        });
+        setReacts(reactsArray);
+        setTotalReacts((prev) => --prev);
+      }
+    } else {
+      setReacted(type);
+      let index = reacts.findIndex((item) => item.react === type);
+      let index1 = reacts.findIndex((item) => item.react === reacted);
+      if (index !== -1) {
+        const newReacts = [
+          ...reacts,
+          (reacts[index].count = ++reacts[index].count),
+        ];
+        const reactsArray = newReacts.sort((a, b) => {
+          return b.count - a.count;
+        });
+        setReacts(reactsArray);
+      }
+      if (index1 !== -1) {
+        const newReacts = [
+          ...reacts,
+          (reacts[index1].count = --reacts[index1].count),
+        ];
+        const reactsArray = newReacts.sort((a, b) => {
+          return b.count - a.count;
+        });
+        setReacts(reactsArray);
+      }
+      if (index1 === -1 && index !== -1) {
+        setTotalReacts((prev) => ++prev);
+      }
+    }
+  };
   return (
     <div className={classes.post} style={{ width: `${profile && "100%"}` }}>
       <div className={classes.post_header}>
@@ -105,8 +198,26 @@ const Post = ({ post, user, profile }) => {
       )}
       <div className={classes.post_infos}>
         <div className={classes.reacts_count}>
-          <div className={classes.reacts_count_imgs}></div>
-          <div className={classes.reacts_count_num}></div>
+          <div className={classes.reacts_count_imgs}>
+            {reacts &&
+              reacts
+                .slice(0, 3)
+                .sort((a, b) => {
+                  return b.count - a.count;
+                })
+                .map(
+                  (react) =>
+                    react.count > 0 && (
+                      <img
+                        key={react.react}
+                        src={`../../../reacts/${react.react}.svg`}
+                      />
+                    )
+                )}
+          </div>
+          <div className={classes.reacts_count_num}>
+            {totalReacts > 0 && totalReacts}
+          </div>
         </div>
         <div className={classes.to_right}>
           <div className={classes.comments_count}>13 comments</div>
@@ -118,6 +229,7 @@ const Post = ({ post, user, profile }) => {
           classes={classes}
           visible={visible}
           setVisible={setVisible}
+          reactHandler={reactHandler}
         />
         <div
           className={`${classes.post_action} hover1`}
@@ -129,9 +241,40 @@ const Post = ({ post, user, profile }) => {
               setVisible(false);
             }, 500);
           }}
+          onClick={() => reactHandler("")}
         >
-          <i className="like_icon"></i>
-          <span>Like</span>
+          {reacted ? (
+            <img
+              src={`../../../reacts/${reacted}.svg`}
+              style={{ width: "18px" }}
+            />
+          ) : (
+            <i className="like_icon"></i>
+          )}
+          <span
+            style={{
+              color: `
+          
+          ${
+            reacted === "like"
+              ? "#4267b2"
+              : reacted === "love"
+              ? "#f63459"
+              : reacted === "haha"
+              ? "#f7b125"
+              : reacted === "sad"
+              ? "#f7b125"
+              : reacted === "wow"
+              ? "#f7b125"
+              : reacted === "angry"
+              ? "#e4605a"
+              : ""
+          }
+          `,
+            }}
+          >
+            {reacted ? reacted : "Like"}
+          </span>
         </div>
         <div className={`${classes.post_action} hover1`}>
           <i className="comment_icon"></i>

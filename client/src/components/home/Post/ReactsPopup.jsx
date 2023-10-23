@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 const reactsArray = [
   {
     name: "like",
@@ -26,7 +24,7 @@ const reactsArray = [
     image: "../../../reacts/angry.gif",
   },
 ];
-const ReactsPopup = ({ visible, setVisible, classes }) => {
+const ReactsPopup = ({ visible, setVisible, classes, reactHandler }) => {
   return (
     <>
       {visible && (
@@ -44,7 +42,11 @@ const ReactsPopup = ({ visible, setVisible, classes }) => {
           }}
         >
           {reactsArray.map((react, i) => (
-            <div className={classes.react} key={i}>
+            <div
+              className={classes.react}
+              key={i}
+              onClick={() => reactHandler(react.name)}
+            >
               <img src={react.image} alt="" />
             </div>
           ))}
