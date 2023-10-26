@@ -44,19 +44,10 @@ exports.createPost = async (req, res) => {
 
 exports.getAllPosts = async (req, res) => {
   try {
-    const postsArr = await Post.find();
-    const posts =
-      postsArr.comments?.length > 0
-        ? postsArr
-            .populate("user", "first_name last_name picture gender username")
-            .populate(
-              "comments.commentBy",
-              "first_name last_name picture username"
-            )
-            .sort({ createdAt: -1 })
-        : postsArr
-            .populate("user", "first_name last_name picture gender username")
-            .sort({ createdAt: -1 });
+    const posts = await Post.find()
+      .populate("user", "first_name last_name picture gender username")
+      .populate("comments.commentBy", "first_name last_name picture username")
+      .sort({ createdAt: -1 });
     return res.json(posts);
   } catch (error) {
     return res

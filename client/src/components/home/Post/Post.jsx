@@ -186,7 +186,7 @@ const Post = ({ post, user, profile }) => {
           </div>
           {showMenu && (
             <PostMenu
-              userId={user.id}
+              userId={user._id}
               postUserId={post.user._id}
               imagesLength={post?.images?.length}
               setShowMenu={setShowMenu}
