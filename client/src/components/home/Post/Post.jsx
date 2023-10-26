@@ -10,18 +10,54 @@ import useClickOutside from "../../../hooks/useClickOutside";
 import { useEffect } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
-import { useDispatch } from "react-redux";
-import { reactPostAction } from "../../../redux/actions/postActions";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addCommentAction,
+  reactPostAction,
+} from "../../../redux/actions/postActions";
+import Comment from "./Comment";
 
 const Post = ({ post, user, profile }) => {
   const [visible, setVisible] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [reacted, setReacted] = useState("");
+  const [comments, setComments] = useState(post?.comments);
   const [reacts, setReacts] = useState([]);
+  const [count, setCount] = useState(1);
   const [totalReacts, setTotalReacts] = useState(0);
 
   const menu = useRef(null);
   useClickOutside(menu, () => setShowMenu(false));
+
+  const { comments: newComments } = useSelector((state) => state.post);
+
+  useEffect(() => {
+    const commentsArr = [];
+    for (let i = post?.comments?.length - 1; i >= 0; i--) {
+      commentsArr.push(post?.comments[i]);
+    }
+    setComments(commentsArr);
+  }, [post]);
+
+  useEffect(() => {
+    if (newComments?.comments?.length > 0 && newComments.postId === post._id) {
+      if (count < comments?.length) {
+        setCount(2);
+        const commentsArr = [];
+        for (let i = newComments?.comments?.length - 1; i >= 0; i--) {
+          commentsArr.push(newComments.comments[i]);
+        }
+        setComments(commentsArr);
+      } else {
+        const commentsArr = [];
+        for (let i = newComments?.comments?.length - 1; i >= 0; i--) {
+          commentsArr.push(newComments.comments[i]);
+        }
+        setComments(commentsArr);
+      }
+    }
+  }, [newComments]);
+
   useEffect(() => {
     const { accessToken } = JSON.parse(Cookies.get("user"));
     (async () => {
@@ -106,6 +142,11 @@ const Post = ({ post, user, profile }) => {
       }
     }
   };
+
+  const commentHandler = (data) => {
+    dispatch(addCommentAction(data));
+  };
+
   return (
     <div className={classes.post} style={{ width: `${profile && "100%"}` }}>
       <div className={classes.post_header}>
@@ -220,7 +261,11 @@ const Post = ({ post, user, profile }) => {
           </div>
         </div>
         <div className={classes.to_right}>
-          <div className={classes.comments_count}>13 comments</div>
+          <div className={classes.comments_count}>
+            {comments?.length > 0
+              ? `${comments?.length} comments`
+              : "0 comments"}
+          </div>
           <div className={classes.share_count}>1 share</div>
         </div>
       </div>
@@ -286,9 +331,35 @@ const Post = ({ post, user, profile }) => {
         </div>
       </div>
       <div className={classes.comments_wrap}>
-        <div className={classes.comments_order}>
-          <CreateComment classes={classes} user={user} />
-        </div>
+        <div className={classes.comments_order}></div>
+        <CreateComment
+          classes={classes}
+          user={user}
+          postId={post._id}
+          createCommentHandler={commentHandler}
+        />
+        {comments &&
+          comments
+            ?.slice(0, count)
+            .sort((a, b) => {
+              return new Date(b.commentedAt) - new Date(a.commentedAt);
+            })
+            .map((comment, index) => (
+              <Comment key={index} comment={comment} classes={classes} />
+            ))}
+        {count < comments?.length && (
+          <div
+            className={classes.view_comments}
+            onClick={() => setCount(comments?.length)}
+          >
+            View more comments
+          </div>
+        )}
+        {count === comments?.length && count !== 1 && (
+          <div className={classes.view_comments} onClick={() => setCount(1)}>
+            View less comments
+          </div>
+        )}
       </div>
     </div>
   );

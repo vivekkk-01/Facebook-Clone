@@ -1,8 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import Picker from "emoji-picker-react";
+import { useDispatch, useSelector } from "react-redux";
 import useClickOutside from "../../../hooks/useClickOutside";
+import ClipLoader from "react-spinners/ClipLoader";
+import {
+  addCommentAction,
+  resetCommentAction,
+} from "../../../redux/actions/postActions";
 
-const CreateComment = ({ user, classes }) => {
+const CreateComment = ({ user, classes, postId, createCommentHandler }) => {
   const [picker, setPicker] = useState(false);
   const [text, setText] = useState("");
   const [error, setError] = useState("");
@@ -10,9 +16,19 @@ const CreateComment = ({ user, classes }) => {
   const [cursorPosition, setCursorPosition] = useState();
   const textRef = useRef(null);
   const imgInput = useRef(null);
+  const dispatch = useDispatch();
+  const { comments, commentLoading, commentError } = useSelector(
+    (state) => state.post
+  );
   useEffect(() => {
     textRef.current.selectionEnd = cursorPosition;
   }, [cursorPosition]);
+  useEffect(() => {
+    if (commentError) {
+      setText("");
+      setCommentImage("");
+    }
+  }, [commentError]);
   const handleEmoji = ({ emoji }, event) => {
     const ref = textRef.current;
     ref.focus();
@@ -49,6 +65,26 @@ const CreateComment = ({ user, classes }) => {
 
   useClickOutside(setPickerRef, () => setPicker(false));
 
+  const commentHandler = async (event) => {
+    if (event.key === "Enter") {
+      if (commentImage === "" && text === "") return;
+
+      if (commentImage !== "") {
+        const formData = new FormData();
+        let image = await fetch(commentImage).then((b) => b.blob());
+        formData.append("image", image);
+        formData.append("comment", text);
+        formData.append("postId", postId);
+        createCommentHandler(formData);
+        setText("");
+        setCommentImage("");
+      } else {
+        createCommentHandler({ comment: text, image: "", postId });
+        setText("");
+      }
+    }
+  };
+
   return (
     <div className={classes.create_comment_wrap}>
       <div className={classes.create_comment}>
@@ -69,13 +105,37 @@ const CreateComment = ({ user, classes }) => {
               </button>
             </div>
           )}
+          {commentError && (
+            <div className={`${classes.postError} ${classes.comment_error}`}>
+              <div className={classes.postError_error}>{commentError}</div>
+              <button
+                className="blue_btn"
+                onClick={() => {
+                  dispatch(resetCommentAction());
+                  setText("");
+                  setCommentImage("");
+                }}
+              >
+                Try again
+              </button>
+            </div>
+          )}
           <input
             type="text"
             ref={textRef}
             value={text}
             placeholder="Write a comment..."
             onChange={(e) => setText(e.target.value)}
+            onKeyUp={commentHandler}
           />
+          {commentLoading && (
+            <div
+              className={classes.comment_circle}
+              style={{ marginTop: "5px" }}
+            >
+              <ClipLoader color="#1876f2" size={20} />
+            </div>
+          )}
           <div
             ref={setPickerRef}
             className={`${classes.comment_circle_icon} hover2`}

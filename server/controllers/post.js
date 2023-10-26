@@ -44,9 +44,19 @@ exports.createPost = async (req, res) => {
 
 exports.getAllPosts = async (req, res) => {
   try {
-    const posts = await Post.find()
-      .populate("user", "first_name last_name picture gender username")
-      .sort({ createdAt: -1 });
+    const postsArr = await Post.find();
+    const posts =
+      postsArr.comments?.length > 0
+        ? postsArr
+            .populate("user", "first_name last_name picture gender username")
+            .populate(
+              "comments.commentBy",
+              "first_name last_name picture username"
+            )
+            .sort({ createdAt: -1 })
+        : postsArr
+            .populate("user", "first_name last_name picture gender username")
+            .sort({ createdAt: -1 });
     return res.json(posts);
   } catch (error) {
     return res
@@ -139,6 +149,58 @@ exports.getReacts = async (req, res) => {
         reacted: reacted.react,
         total: reactsArray.length,
       });
+    }
+  } catch (error) {
+    return res
+      .status(error.code || 500)
+      .json(error.message || "Something went wrong, please try again!");
+  }
+};
+
+exports.addComment = async (req, res) => {
+  try {
+    const { postId, comment } = req.body;
+    if (req.file) {
+      const filePath = path.join(
+        `public/uploads/commentImage/${req.file.filename}`
+      );
+      const { secure_url } = await cloudinary.v2.uploader.upload(filePath);
+      unlink(filePath, (err) => {
+        if (err) {
+          throw err;
+        }
+      });
+      const newPost = await Post.findByIdAndUpdate(
+        postId,
+        {
+          $push: {
+            comments: {
+              comment,
+              image: secure_url,
+              commentBy: req.user._id,
+              commentedAt: new Date(),
+            },
+          },
+        },
+        { new: true }
+      ).populate("comments.commentBy", "first_name last_name picture username");
+      return res.json({ postId, comments: newPost.comments });
+    } else {
+      const newPost = await Post.findByIdAndUpdate(
+        postId,
+        {
+          $push: {
+            comments: {
+              comment,
+              image: "",
+              commentBy: req.user._id,
+              commentedAt: new Date(),
+            },
+          },
+        },
+        { new: true }
+      ).populate("comments.commentBy", "first_name last_name picture username");
+      return res.json({ postId, comments: newPost.comments });
     }
   } catch (error) {
     return res

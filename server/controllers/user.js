@@ -257,7 +257,9 @@ exports.getProfile = async (req, res) => {
       if (profile.requests.includes(me._id)) relation.requestSent = true;
       if (me.requests.includes(profile._id)) relation.requestReceived = true;
     }
-    const posts = await Post.find({ user: profile._id }).populate("user");
+    const posts = await Post.find({ user: profile._id })
+      .populate("user")
+      .populate("comments.commentBy", "first_name last_name username picture");
     if (!profile) return res.status(403).json("Profile Not Found!");
     await profile.populate("friends", "last_name first_name username picture");
     return res.json({ ...profile.toObject(), posts, relation });

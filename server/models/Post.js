@@ -16,7 +16,7 @@ const postSchema = new Schema(
       required: true,
     },
     background: String,
-    comment: {
+    comments: {
       comment: String,
       image: String,
       commentBy: {
@@ -25,7 +25,6 @@ const postSchema = new Schema(
       },
       commentedAt: {
         type: Date,
-        default: new Date(),
       },
     },
   },

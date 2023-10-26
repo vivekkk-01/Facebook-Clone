@@ -6,6 +6,9 @@ const initialState = {
   error: null,
   reactPostLoading: false,
   reactPostError: null,
+  commentLoading: false,
+  comments: null,
+  commentError: null,
 };
 
 const postSlice = createSlice({
@@ -31,6 +34,23 @@ const postSlice = createSlice({
       state.reactPostLoading = false;
       state.reactPostError = payload;
     },
+    setCommentLoading: (state) => {
+      state.commentLoading = true;
+    },
+    setComments: (state, { payload }) => {
+      state.commentLoading = false;
+      state.comments = payload;
+      state.commentError = null;
+    },
+    resetComment: (state) => {
+      state.commentLoading = false;
+      state.commentError = null;
+      state.comments = null;
+    },
+    setCommentError: (state, { payload }) => {
+      state.commentLoading = false;
+      state.commentError = payload;
+    },
     setError: (state, { payload }) => {
       state.loading = false;
       state.error = payload;
@@ -45,5 +65,9 @@ export const {
   setReactPost,
   setReactPostError,
   setReactPostLoading,
+  setComments,
+  setCommentError,
+  setCommentLoading,
+  resetComment,
   setError,
 } = postSlice.actions;
