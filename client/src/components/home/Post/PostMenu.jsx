@@ -1,8 +1,6 @@
-import { useRef, useState } from "react";
 import MenuItem from "./MenuItem";
-import useClickOutside from "../../../hooks/useClickOutside";
 const PostMenu = ({ postUserId, userId, imagesLength, classes }) => {
-  const [test, setTest] = useState(postUserId === userId ? true : false);
+  const test = postUserId === userId ? true : false;
   return (
     <ul className={classes.post_menu}>
       {test ? <MenuItem icon="pin_icon" title="Pin Post" /> : null}

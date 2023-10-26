@@ -1,7 +1,7 @@
 .home {
   height: 100%;
   min-height: 100vh;
-  background: var(--bg-secondary);
+  background: #dddde1;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
 }

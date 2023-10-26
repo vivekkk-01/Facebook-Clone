@@ -14,23 +14,13 @@ import Post from "../../components/home/Post/Post";
 
 const Home = () => {
   const { userInfo } = useSelector((state) => state.user);
-  const { allPosts } = useSelector((state) => state.post);
+  const { allPosts, loading } = useSelector((state) => state.post);
   const [height, setHeight] = useState(0);
   const middle = useRef();
 
   useEffect(() => {
-    const handleHeight = () => {
-      if (window.innerWidth < 400) {
-        setHeight(middle.current.clientHeight + 100);
-      } else {
-        setHeight(middle.current.clientHeight + 150);
-      }
-    };
-    window.addEventListener("resize", handleHeight);
-    return () => {
-      window.removeEventListener("resize", handleHeight);
-    };
-  }, []);
+    setHeight(middle.current.clientHeight);
+  }, [loading]);
 
   const dispatch = useDispatch();
 
@@ -39,7 +29,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className={classes.home} style={{ height: `${height}px` }}>
+    <div className={classes.home} style={{ height: `${height + 150}px` }}>
       <Header page="home" />
       <Left user={userInfo} />
       <div className={classes.home_middle} ref={middle}>

@@ -91,7 +91,7 @@ header {
   transform: translateY(1px) translateX(-1px);
 }
 .active_link {
-  background-color: var(--light-blue-color);
+  background-color: #d0e0f2;
   color: var(--blue-color);
 }
 .middle_notification {

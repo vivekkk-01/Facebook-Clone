@@ -505,7 +505,8 @@
 }
 
 .comment_name {
-  font-size: 13px;
+  font-size: 12px;
+  font-style: italic;
   color: #474646;
 }
 
