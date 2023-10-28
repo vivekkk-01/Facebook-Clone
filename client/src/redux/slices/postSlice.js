@@ -9,6 +9,10 @@ const initialState = {
   commentLoading: false,
   comments: null,
   commentError: null,
+  savePostLoading: false,
+  savePost: null,
+  savePostError: null,
+  deletePostError: null,
 };
 
 const postSlice = createSlice({
@@ -51,6 +55,28 @@ const postSlice = createSlice({
       state.commentLoading = false;
       state.commentError = payload;
     },
+    postFromHome: (state, { payload }) => {
+      state.allPosts = [payload, ...state.allPosts];
+    },
+    setSavePostLoading: (state) => {
+      state.savePostLoading = true;
+    },
+    setSavePost: (state, { payload }) => {
+      state.savePostLoading = false;
+      state.savePost = payload;
+      state.savePostError = null;
+    },
+    setSavePostError: (state, { payload }) => {
+      state.savePostLoading = false;
+      state.savePostError = payload;
+    },
+    deletePost: (state, { payload }) => {
+      const index = state.allPosts.findIndex((post) => post._id === payload);
+      state.allPosts.splice(index, 1);
+    },
+    setDeletePostError: (state, { payload }) => {
+      state.deletePostError = payload;
+    },
     setError: (state, { payload }) => {
       state.loading = false;
       state.error = payload;
@@ -69,5 +95,11 @@ export const {
   setCommentError,
   setCommentLoading,
   resetComment,
+  postFromHome,
   setError,
+  setSavePostError,
+  setSavePostLoading,
+  setSavePost,
+  deletePost,
+  setDeletePostError,
 } = postSlice.actions;

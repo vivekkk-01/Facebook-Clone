@@ -259,7 +259,8 @@ exports.getProfile = async (req, res) => {
     }
     const posts = await Post.find({ user: profile._id })
       .populate("user")
-      .populate("comments.commentBy", "first_name last_name username picture");
+      .populate("comments.commentBy", "first_name last_name username picture")
+      .sort({ createdAt: -1 });
     if (!profile) return res.status(403).json("Profile Not Found!");
     await profile.populate("friends", "last_name first_name username picture");
     return res.json({ ...profile.toObject(), posts, relation });

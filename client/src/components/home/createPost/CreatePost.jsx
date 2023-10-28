@@ -2,12 +2,18 @@ import React from "react";
 import classes from "./createPost.module.css";
 import { Feeling, LiveVideo, Photo } from "../../../svg";
 import { useDispatch } from "react-redux";
-import { postPopupActions } from "../../../redux/actions/postPopActions";
+import {
+  postFromProfileAction,
+  postPopupActions,
+} from "../../../redux/actions/postPopActions";
 
-const CreatePost = ({ user }) => {
+const CreatePost = ({ user, profile }) => {
   const dispatch = useDispatch();
   const handlePostPopup = () => {
     dispatch(postPopupActions(true));
+    profile
+      ? dispatch(postFromProfileAction(true))
+      : dispatch(postFromProfileAction(false));
   };
   return (
     <div className={classes.createPost}>

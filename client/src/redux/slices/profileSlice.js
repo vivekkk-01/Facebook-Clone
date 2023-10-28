@@ -17,6 +17,7 @@ const initialState = {
   relationshipLoading: false,
   relationshipError: null,
   updateDetailsError: null,
+  deletePostError: null,
 };
 
 const profileSlice = createSlice({
@@ -118,6 +119,21 @@ const profileSlice = createSlice({
       state.relationshipLoading = false;
       state.relationshipError = payload;
     },
+    createdPostFromProfile: (state, { payload }) => {
+      state.profileInfo = {
+        ...state.profileInfo,
+        posts: [payload, ...state.profileInfo.posts],
+      };
+    },
+    deletePost: (state, { payload }) => {
+      const index = state.profileInfo.posts.findIndex(
+        (post) => post._id === payload
+      );
+      state.profileInfo.posts.splice(index, 1);
+    },
+    setDeletePostError: (state, { payload }) => {
+      state.deletePostError = payload;
+    },
     setError: (state, { payload }) => {
       state.loading = false;
       state.profileInfo = null;
@@ -147,5 +163,8 @@ export const {
   setRelationshipLoading,
   setRelationship,
   setRelationshipError,
+  createdPostFromProfile,
+  deletePost,
+  setDeletePostError,
   setError,
 } = profileSlice.actions;

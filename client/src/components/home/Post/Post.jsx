@@ -20,11 +20,15 @@ import Comment from "./Comment";
 const Post = ({ post, user, profile }) => {
   const [visible, setVisible] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [isSavedPost, setIsSavedPost] = useState(false);
   const [reacted, setReacted] = useState("");
   const [comments, setComments] = useState(post?.comments);
   const [reacts, setReacts] = useState([]);
   const [count, setCount] = useState(1);
   const [totalReacts, setTotalReacts] = useState(0);
+  const postRef = useRef();
+
+  const { userInfo } = useSelector((state) => state.user);
 
   const menu = useRef(null);
   useClickOutside(menu, () => setShowMenu(false));
@@ -58,6 +62,7 @@ const Post = ({ post, user, profile }) => {
     }
   }, [newComments]);
 
+
   useEffect(() => {
     const { accessToken } = JSON.parse(Cookies.get("user"));
     (async () => {
@@ -71,6 +76,7 @@ const Post = ({ post, user, profile }) => {
       );
       setReacts(data.reacts);
       setTotalReacts(data.total);
+      setIsSavedPost(data.isSavedPost);
       if (data.reacted) {
         setReacted(data.reacted);
       }
@@ -148,7 +154,11 @@ const Post = ({ post, user, profile }) => {
   };
 
   return (
-    <div className={classes.post} style={{ width: `${profile && "100%"}` }}>
+    <div
+      className={classes.post}
+      style={{ width: `${profile && "100%"}` }}
+      ref={postRef}
+    >
       <div className={classes.post_header}>
         <Link
           className={classes.post_header_left}
@@ -186,11 +196,16 @@ const Post = ({ post, user, profile }) => {
           </div>
           {showMenu && (
             <PostMenu
-              userId={user._id}
+              userId={userInfo.id}
               postUserId={post.user._id}
               imagesLength={post?.images?.length}
               setShowMenu={setShowMenu}
               classes={classes}
+              postId={post._id}
+              isSavedPost={isSavedPost}
+              setIsSavedPost={setIsSavedPost}
+              images={post?.images}
+              isProfile={profile}
             />
           )}
         </div>

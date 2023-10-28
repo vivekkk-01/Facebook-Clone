@@ -151,19 +151,18 @@ const userSchema = new Schema(
         trim: true,
         default: "",
       },
-      savedPosts: [
-        {
-          post: {
-            type: Schema.Types.ObjectId,
-            ref: "Post",
-          },
-          savedAt: {
-            type: Date,
-            default: new Date(),
-          },
-        },
-      ],
     },
+    savedPosts: [
+      {
+        post: {
+          type: Schema.Types.ObjectId,
+          ref: "Post",
+        },
+        savedAt: {
+          type: Date,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );

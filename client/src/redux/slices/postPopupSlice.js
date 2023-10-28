@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   isPostPopup: false,
+  postFromProfile: false,
 };
 
 const postPopupSlice = createSlice({
@@ -11,8 +12,11 @@ const postPopupSlice = createSlice({
     setPostPopup: (state, { payload }) => {
       state.isPostPopup = payload;
     },
+    setPostFromProfile: (state, { payload }) => {
+      state.postFromProfile = payload;
+    },
   },
 });
 
-export const { setPostPopup } = postPopupSlice.actions;
+export const { setPostPopup, setPostFromProfile } = postPopupSlice.actions;
 export default postPopupSlice.reducer;

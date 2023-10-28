@@ -1,8 +1,11 @@
 import classes from "./post.module.css";
 
-const MenuItem = ({ icon, title, subtitle, img }) => {
+const MenuItem = ({ icon, title, subtitle, img, isCursorDefault }) => {
   return (
-    <li className="hover1">
+    <li
+      className="hover1"
+      style={{ cursor: isCursorDefault ? "default" : "pointer" }}
+    >
       {img ? <img src={img} alt="" /> : <i className={icon}></i>}
       <div className={classes.post_menu_text}>
         <span>{title}</span>

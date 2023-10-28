@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const createPost = async (data, token) => {
   try {
-    await axios.post(
+    const { data: postData } = await axios.post(
       `${process.env.REACT_APP_SERVER_ROUTE}/post/create`,
       data,
       {
@@ -11,7 +11,7 @@ export const createPost = async (data, token) => {
         },
       }
     );
-    return "ok";
+    return { status: "ok", data: postData };
   } catch (error) {
     const err = error?.response?.data
       ? error?.response?.data

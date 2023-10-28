@@ -89,7 +89,7 @@ const Profile = () => {
                     <Friends classes={classes} friends={profileInfo?.friends} />
                   </div>
                   <div className={classes.profile_right}>
-                    {ownProfile ? <CreatePost user={userInfo} /> : null}
+                    {ownProfile ? <CreatePost user={userInfo} profile /> : null}
                     <GridPosts classes={classes} />
                     <div className={classes.posts}>
                       {profileInfo?.posts && profileInfo?.posts.length > 0 ? (

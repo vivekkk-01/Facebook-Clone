@@ -7,6 +7,8 @@ const {
   reactPost,
   getReacts,
   addComment,
+  savePost,
+  deletePost,
 } = require("../controllers/post");
 const {
   uploadImage,
@@ -35,5 +37,9 @@ router.post(
   validateCommentImage,
   addComment
 );
+
+router.put("/save-post/:postId", auth, savePost);
+
+router.delete("/delete-post/:postId", auth, deletePost);
 
 module.exports = router;

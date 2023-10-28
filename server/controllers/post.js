@@ -1,4 +1,5 @@
 const Post = require("../models/Post");
+const User = require("../models/User");
 const React = require("../models/React");
 const cloudinary = require("cloudinary");
 const { unlink } = require("fs");
@@ -34,6 +35,7 @@ exports.createPost = async (req, res) => {
       );
     }
     await post.save();
+    await post.populate("user", "first_name last_name cover picture username");
     return res.status(201).json(post);
   } catch (error) {
     return res
@@ -44,11 +46,15 @@ exports.createPost = async (req, res) => {
 
 exports.getAllPosts = async (req, res) => {
   try {
-    const posts = await Post.find()
+    const followingTemp = await User.findById(req.user._id).select(
+      "followings"
+    );
+    const following = followingTemp.followings;
+    const followingPosts = await Post.find({ user: { $in: following } })
       .populate("user", "first_name last_name picture gender username")
       .populate("comments.commentBy", "first_name last_name picture username")
       .sort({ createdAt: -1 });
-    return res.json(posts);
+    return res.json(followingPosts);
   } catch (error) {
     return res
       .status(error.code || 500)
@@ -132,13 +138,20 @@ exports.getReacts = async (req, res) => {
       return b.count - a.count;
     });
 
+    const user = await User.findById(req.user._id);
+    const savedPost = user.savedPosts.find(
+      (post) => post.post._id.toString() === postId
+    );
+    const isSavedPost = savedPost ? true : false;
+
     if (reacted == null) {
-      return res.json({ reacts, total: reactsArray.length });
+      return res.json({ reacts, total: reactsArray.length, isSavedPost });
     } else {
       return res.json({
         reacts,
         reacted: reacted.react,
         total: reactsArray.length,
+        isSavedPost,
       });
     }
   } catch (error) {
@@ -193,6 +206,52 @@ exports.addComment = async (req, res) => {
       ).populate("comments.commentBy", "first_name last_name picture username");
       return res.json({ postId, comments: newPost.comments });
     }
+  } catch (error) {
+    return res
+      .status(error.code || 500)
+      .json(error.message || "Something went wrong, please try again!");
+  }
+};
+
+exports.savePost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const userId = req.user._id;
+    const user = await User.findById(userId);
+    const check = user.savedPosts.find(
+      (post) => post.post._id.toString() === postId
+    );
+    if (check) {
+      await User.findByIdAndUpdate(userId, {
+        $pull: {
+          savedPosts: {
+            post: postId,
+          },
+        },
+      });
+    } else {
+      await User.findByIdAndUpdate(userId, {
+        $push: {
+          savedPosts: {
+            post: postId,
+            savedAt: new Date(),
+          },
+        },
+      });
+    }
+    return res.json(`Post ${check ? "unsaved" : "saved"} successfully.`);
+  } catch (error) {
+    return res
+      .status(error.code || 500)
+      .json(error.message || "Something went wrong, please try again!");
+  }
+};
+
+exports.deletePost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    await Post.findByIdAndRemove(postId);
+    return res.json("Post deleted successfully!");
   } catch (error) {
     return res
       .status(error.code || 500)

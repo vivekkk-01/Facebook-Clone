@@ -1,8 +1,11 @@
 import Cookies from "js-cookie";
 import {
+  createdPostFromProfile,
+  deletePost,
   resetProfilePictures,
   resetUpdateProfilePic,
   setAllImages,
+  setDeletePostError,
   setError,
   setImagesError,
   setImagesLoading,
@@ -378,5 +381,33 @@ export const rejectRequestAction = (profileId) => async (dispatch) => {
       ? error?.message
       : "Something went wrong, please try again!";
     dispatch(setRelationshipError(err));
+  }
+};
+
+export const createdPostFromProfileAction = (data) => (dispatch) => {
+  dispatch(createdPostFromProfile(data))
+};
+
+export const deletePostFromProfileAction = (postId) => async (dispatch) => {
+  const { accessToken } = JSON.parse(Cookies.get("user"));
+  try {
+    await axios.delete(
+      `${process.env.REACT_APP_SERVER_ROUTE}/post/delete-post/${postId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    dispatch(deletePost(postId));
+  } catch (error) {
+    const err = error?.response?.data
+      ? error?.response?.data
+      : error?.response?.data?.message
+      ? error?.response?.data?.message
+      : error?.message
+      ? error?.message
+      : "Something went wrong, please try again!";
+    dispatch(setDeletePostError(err));
   }
 };

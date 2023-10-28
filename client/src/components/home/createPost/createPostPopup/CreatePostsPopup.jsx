@@ -9,8 +9,10 @@ import useClickOutside from "../../../../hooks/useClickOutside";
 import PulseLoader from "react-spinners/PulseLoader";
 import { createPost } from "../../../../api/post";
 import PostError from "./PostError";
+import { createdPostFromProfileAction } from "../../../../redux/actions/profileActions";
+import { postFromHomeAction } from "../../../../redux/actions/postActions";
 
-const CreatePostsPopup = () => {
+const CreatePostsPopup = ({ profile }) => {
   const [text, setText] = useState("");
   const [images, setImages] = useState([]);
   const [imageFiles, setImageFiles] = useState([]);
@@ -38,11 +40,17 @@ const CreatePostsPopup = () => {
     formData.append("path", `${user.username} Images`);
     const response = await createPost(formData, user.accessToken);
     setLoading(false);
-    if (response === "ok") {
+    if (response.status === "ok") {
       setText("");
       setImages([]);
       setImageFiles([]);
       setBackground(null);
+      dispatch(postPopupActions(false));
+      if (profile) {
+        dispatch(createdPostFromProfileAction(response.data));
+      } else {
+        dispatch(postFromHomeAction(response.data));
+      }
     } else {
       setLoading(false);
       setError(response);

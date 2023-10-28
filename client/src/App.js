@@ -17,10 +17,12 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  const { isPostPopup } = useSelector((state) => state.postPopup);
+  const { isPostPopup, postFromProfile } = useSelector(
+    (state) => state.postPopup
+  );
   return (
     <>
-      {isPostPopup && <CreatePostsPopup />}
+      {isPostPopup && <CreatePostsPopup profile={postFromProfile} />}
       <RouterProvider router={router} />
     </>
   );
