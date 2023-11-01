@@ -3,6 +3,10 @@ import Cookies from "js-cookie";
 
 const initialState = {
   userInfo: Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null,
+  searchResultsLoading: false,
+  searchResults: [],
+  searchResultsError: null,
+  searchHistory: [],
 };
 
 const userSlice = createSlice({
@@ -15,6 +19,29 @@ const userSlice = createSlice({
     setUserVerification: (state, { payload }) => {
       state.userInfo = payload;
     },
+    setSearchResultsLoading: (state) => {
+      state.searchResultsLoading = true;
+    },
+    setSearchResults: (state, { payload }) => {
+      state.searchResultsLoading = false;
+      state.searchResults = payload;
+      state.searchHistory = [];
+      state.searchResultsError = null;
+    },
+    setSearchResultsError: (state, { payload }) => {
+      state.searchResultsLoading = false;
+      state.searchResults = [];
+      state.searchResultsError = payload;
+    },
+    setSearchEmpty: (state) => {
+      state.searchResultsLoading = false;
+      state.searchResults = [];
+      state.searchResultsError = null;
+    },
+    setSearchHistory: (state, { payload }) => {
+      state.searchHistory = payload;
+      state.searchResults = [];
+    },
     setLogout: (state) => {
       state.userInfo = null;
     },
@@ -22,5 +49,13 @@ const userSlice = createSlice({
 });
 
 export default userSlice.reducer;
-export const { setUserInfo, setUserVerification, setLogout } =
-  userSlice.actions;
+export const {
+  setUserInfo,
+  setUserVerification,
+  setSearchResultsLoading,
+  setSearchResults,
+  setSearchResultsError,
+  setSearchEmpty,
+  setSearchHistory,
+  setLogout,
+} = userSlice.actions;

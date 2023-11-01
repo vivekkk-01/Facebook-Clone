@@ -571,3 +571,79 @@ exports.rejectRequest = async (req, res) => {
       .json(error.message || "Something went wrong, please try again!");
   }
 };
+
+exports.searchUser = async (req, res) => {
+  try {
+    const { searchTerm } = req.params;
+    const users = await User.find({ $text: { $search: searchTerm } }).select(
+      "username first_name last_name picture"
+    );
+
+    res.json(users);
+  } catch (error) {
+    return res
+      .status(error.code || 500)
+      .json(error.message || "Something went wrong, please try again!");
+  }
+};
+
+exports.addToSearchHistory = async (req, res) => {
+  try {
+    const { searchUser } = req.body;
+    const user = await User.findById(req.user._id);
+    const check = user.search.find((x) => x.user.toString() === searchUser);
+    if (check) {
+      await User.updateOne(
+        { _id: req.user._id, "search._id": check._id },
+        { $set: { "search.$.createdAt": new Date() } }
+      );
+
+      res.json(user.search);
+    } else {
+      const search = {
+        user: searchUser,
+        createdAt: new Date(),
+      };
+      await User.findByIdAndUpdate(req.user._id, {
+        $push: {
+          search,
+        },
+      });
+      res.json(user.search);
+    }
+  } catch (error) {
+    return res
+      .status(error.code || 500)
+      .json(error.message || "Something went wrong, please try again!");
+  }
+};
+
+exports.getSearchHistory = async (req, res) => {
+  try {
+    const searchHistory = await User.findById(req.user._id)
+      .select("search")
+      .populate("search.user", "username first_name last_name picture");
+    return res.json(searchHistory.search);
+  } catch (error) {
+    return res
+      .status(error.code || 500)
+      .json(error.message || "Something went wrong, please try again!");
+  }
+};
+
+exports.removeFromSearch = async (req, res) => {
+  try {
+    const { searchUser } = req.params;
+    await User.findByIdAndUpdate(req.user._id, {
+      $pull: { search: { user: searchUser } },
+    });
+    const searchHistory = await User.findById(req.user._id)
+      .select("search")
+      .populate("search.user", "username first_name last_name picture");
+    return res.json(searchHistory.search);
+  } catch (error) {
+    return res
+      .status(error.code || 500)
+      .json(error.message || "Something went wrong, please try again!");
+  }
+};

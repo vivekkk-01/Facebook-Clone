@@ -62,7 +62,6 @@ const Post = ({ post, user, profile }) => {
     }
   }, [newComments]);
 
-
   useEffect(() => {
     const { accessToken } = JSON.parse(Cookies.get("user"));
     (async () => {
