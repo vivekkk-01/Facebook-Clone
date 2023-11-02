@@ -9,6 +9,7 @@ const { sendVerificationEmail, sendPasswordResetOTP } = require("../mailer");
 const crypto = require("crypto");
 const path = require("path");
 const { unlink } = require("fs");
+const { default: mongoose } = require("mongoose");
 
 cloudinary.v2.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -641,6 +642,27 @@ exports.removeFromSearch = async (req, res) => {
       .select("search")
       .populate("search.user", "username first_name last_name picture");
     return res.json(searchHistory.search);
+  } catch (error) {
+    return res
+      .status(error.code || 500)
+      .json(error.message || "Something went wrong, please try again!");
+  }
+};
+
+exports.getFriendsInfo = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id)
+      .select("friends requests")
+      .populate("friends", "first_name last_name picture username")
+      .populate("requests", "first_name last_name picture username");
+    const sentRequests = await User.find({
+      requests: new mongoose.Types.ObjectId(req.user._id),
+    }).select("first_name last_name picture username");
+    res.json({
+      friends: user.friends,
+      requestsReceived: user.requests,
+      requestsSent: sentRequests,
+    });
   } catch (error) {
     return res
       .status(error.code || 500)

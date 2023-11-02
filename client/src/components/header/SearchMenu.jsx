@@ -9,7 +9,7 @@ import {
   searchResultsAction,
   setSearchHistoryAction,
 } from "../../redux/actions/userActions";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const SearchMenu = ({ classes, color, setShowSearchMenu }) => {
   const [showSearchIcon, setShowSearchIcon] = useState(true);
@@ -24,7 +24,7 @@ const SearchMenu = ({ classes, color, setShowSearchMenu }) => {
     searchHistory,
     searchResultsError,
   } = useSelector((state) => state.user);
-
+  const navigate = useNavigate();
   useEffect(() => {
     inputRef.current.focus();
   }, []);
@@ -101,7 +101,10 @@ const SearchMenu = ({ classes, color, setShowSearchMenu }) => {
                 <Link
                   to={`/profile/${user.user.username}`}
                   style={{ display: "flex", alignItems: "center", gap: "10px" }}
-                  onClick={searchHistoryHandler.bind(null, user.user._id)}
+                  onClick={() => {
+                    searchHistoryHandler.bind(null, user.user._id);
+                    navigate(`/profile/${user.user.username}`);
+                  }}
                 >
                   <img src={user.user.picture} alt="" />
                   <span>
