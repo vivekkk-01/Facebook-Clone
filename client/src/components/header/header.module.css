@@ -417,7 +417,7 @@ header {
 .mmenu_item {
   position: relative;
   display: flex;
-  align-items: center;
+  gap: 0.3rem;
   margin-top: 5px;
   padding: 7px;
   font-weight: 600;
