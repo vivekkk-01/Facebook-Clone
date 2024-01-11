@@ -9,12 +9,14 @@ const Left = ({ user }) => {
   const [visible, setVisible] = useState(false);
   return (
     <div className={`${classes.left_home} scrollbar`}>
-      <Link to="/profile" className={`${classes.left_link} hover1`}>
-        <img src={user?.picture} alt="" />
-        <span>
-          {user?.firstName} {user?.lastName}
-        </span>
-      </Link>
+      {user && (
+        <Link to="/profile" className={`${classes.left_link} hover1`}>
+          <img src={user?.picture} alt="" />
+          <span>
+            {user?.firstName} {user?.lastName}
+          </span>
+        </Link>
+      )}
       {left.slice(0, 8).map((link, i) => (
         <LeftLink
           key={i}

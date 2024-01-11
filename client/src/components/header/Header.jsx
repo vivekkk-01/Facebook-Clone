@@ -75,14 +75,16 @@ const Header = ({ page }) => {
         >
           {page === "home" ? <HomeActive /> : <Home />}
         </Link>
-        <Link
-          to="/friends"
-          className={`${classes.middle_icon} ${
-            page === "friends" ? classes.active : "hover1"
-          }`}
-        >
-          {page === "friends" ? <FriendsActive /> : <Friends />}
-        </Link>
+        {userInfo && (
+          <Link
+            to="/friends"
+            className={`${classes.middle_icon} ${
+              page === "friends" ? classes.active : "hover1"
+            }`}
+          >
+            {page === "friends" ? <FriendsActive /> : <Friends />}
+          </Link>
+        )}
         <Link to="/" className={`hover1 ${classes.middle_icon}`}>
           <Watch color={color} />
           <div className={classes.middle_notification}>9+</div>
@@ -95,15 +97,17 @@ const Header = ({ page }) => {
         </Link>
       </div>
       <div className={classes.header_right}>
-        <Link
-          to={`/profile/${userInfo?.username}`}
-          className={`${classes.profile_link} ${
-            page === "profile" ? classes.active_link : "hover1"
-          }`}
-        >
-          <img src={userInfo?.picture} />
-          <span>{userInfo?.firstName}</span>
-        </Link>
+        {userInfo && (
+          <Link
+            to={`/profile/${userInfo?.username}`}
+            className={`${classes.profile_link} ${
+              page === "profile" ? classes.active_link : "hover1"
+            }`}
+          >
+            <img src={userInfo?.picture} />
+            <span>{userInfo?.firstName}</span>
+          </Link>
+        )}
         <div
           className={`${classes.circle_icon} ${
             showAllMenu && classes.active_header
@@ -127,18 +131,20 @@ const Header = ({ page }) => {
           <Notifications />
           <div className={classes.right_notification}>5</div>
         </div>
-        <div
-          style={{ transform: "translateY(2px)" }}
-          className={`hover1 ${classes.circle_icon} ${
-            showUserMenu && classes.active_header
-          }`}
-          ref={userRef}
-        >
-          <div onClick={() => setShowUserMenu((prev) => !prev)}>
-            <ArrowDown />
+        {userInfo && (
+          <div
+            style={{ transform: "translateY(2px)" }}
+            className={`hover1 ${classes.circle_icon} ${
+              showUserMenu && classes.active_header
+            }`}
+            ref={userRef}
+          >
+            <div onClick={() => setShowUserMenu((prev) => !prev)}>
+              <ArrowDown />
+            </div>
+            {showUserMenu && <UserMenu user={userInfo} classes={classes} />}
           </div>
-          {showUserMenu && <UserMenu user={userInfo} classes={classes} />}
-        </div>
+        )}
       </div>
     </header>
   );

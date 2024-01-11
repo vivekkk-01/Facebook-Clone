@@ -61,12 +61,12 @@ const LoginForm = ({ classes, setVisible }) => {
   });
   return (
     <div className={classes.login_wrap}>
-      <div className={classes.login_1}>
+      <Link to="/" className={classes.login_1}>
         <img src="../../../icons/facebook.svg" alt="" />
         <span>
           Facebook helps you connect and share with the people in your life.
         </span>
-      </div>
+      </Link>
       <div className={classes.login_2}>
         <div className={classes.login_2_wrap}>
           <form onSubmit={formik.handleSubmit}>

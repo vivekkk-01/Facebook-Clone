@@ -1,6 +1,4 @@
 import Header from "../../components/header/Header";
-import store from "../../redux/store";
-import { redirect } from "react-router-dom";
 import Left from "../../components/home/leftHome/Left";
 import { useDispatch, useSelector } from "react-redux";
 import Right from "../../components/home/right/Right";
@@ -34,25 +32,19 @@ const Home = () => {
       <Left user={userInfo} />
       <div className={classes.home_middle} ref={middle}>
         <Stories />
-        {!userInfo?.verified && (
+        {userInfo && !userInfo?.verified && (
           <SendVerificationLink accessToken={userInfo?.accessToken} />
         )}
-        <CreatePost user={userInfo} />
+        {userInfo && <CreatePost user={userInfo} />}
         <div className={classes.posts}>
           {allPosts.map((post) => (
             <Post key={post._id} post={post} user={userInfo} />
           ))}
         </div>
       </div>
-      <Right user={userInfo} />
+      {userInfo && <Right user={userInfo} />}
     </div>
   );
 };
 
 export default Home;
-
-export const loader = () => {
-  const userInfo = store.getState().user.userInfo;
-  if (!userInfo) return redirect("/login");
-  return null;
-};
