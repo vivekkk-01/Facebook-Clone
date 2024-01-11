@@ -42,7 +42,7 @@ const Header = ({ page }) => {
   return (
     <header>
       <div className={classes.header_left}>
-        <Link className={classes.header_logo}>
+        <Link to="/" className={classes.header_logo}>
           <div className={classes.circle}>
             <Logo />
           </div>
