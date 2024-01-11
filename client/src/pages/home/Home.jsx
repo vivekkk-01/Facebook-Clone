@@ -23,7 +23,11 @@ const Home = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getPostsActions());
+    if (userInfo) {
+      dispatch(getPostsActions({ isUserLoggedIn: true }));
+    } else {
+      dispatch(getPostsActions({ isUserLoggedIn: false }));
+    }
   }, []);
 
   return (

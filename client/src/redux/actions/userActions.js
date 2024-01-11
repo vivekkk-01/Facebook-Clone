@@ -26,16 +26,10 @@ export const userVerificationAction = (data) => (dispatch) => {
 };
 
 export const searchResultsAction = (searchTerm) => async (dispatch) => {
-  const { accessToken } = JSON.parse(Cookies.get("user"));
   try {
     dispatch(setSearchResultsLoading());
     const { data } = await axios.get(
-      `${process.env.REACT_APP_SERVER_ROUTE}/user/search/${searchTerm}`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
+      `${process.env.REACT_APP_SERVER_ROUTE}/user/search/${searchTerm}`
     );
     dispatch(setSearchResults(data));
   } catch (error) {

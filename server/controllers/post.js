@@ -46,15 +46,23 @@ exports.createPost = async (req, res) => {
 
 exports.getAllPosts = async (req, res) => {
   try {
-    const followingTemp = await User.findById(req.user._id).select(
-      "followings"
-    );
-    const following = followingTemp.followings;
-    const followingPosts = await Post.find({ user: { $in: following } })
-      .populate("user", "first_name last_name picture gender username")
-      .populate("comments.commentBy", "first_name last_name picture username")
-      .sort({ createdAt: -1 });
-    return res.json(followingPosts);
+    if (req.headers.id) {
+      const followingTemp = await User.findById(req.headers.id).select(
+        "followings"
+      );
+      const following = followingTemp.followings;
+      const followingPosts = await Post.find({ user: { $in: following } })
+        .populate("user", "first_name last_name picture gender username")
+        .populate("comments.commentBy", "first_name last_name picture username")
+        .sort({ createdAt: -1 });
+      return res.json(followingPosts);
+    } else {
+      const posts = await Post.find()
+        .populate("user", "first_name last_name picture gender username")
+        .populate("comments.commentBy", "first_name last_name picture username")
+        .sort({ createdAt: -1 });
+      return res.json(posts);
+    }
   } catch (error) {
     return res
       .status(error.code || 500)
@@ -95,64 +103,105 @@ exports.reactPost = async (req, res) => {
 
 exports.getReacts = async (req, res) => {
   try {
-    const { postId } = req.params;
-    const reactsArray = await React.find({ postRef: postId });
-    const reacted = await React.findOne({
-      postRef: postId,
-      reactBy: req.user._id,
-    });
-
-    const newReacts = reactsArray.reduce((group, react) => {
-      let key = react["react"];
-      group[key] = group[key] || [];
-      group[key].push(react);
-      return group;
-    }, {});
-    const reacts = [
-      {
-        react: "like",
-        count: newReacts.like?.length ? newReacts.like?.length : 0,
-      },
-      {
-        react: "haha",
-        count: newReacts.haha?.length ? newReacts.haha?.length : 0,
-      },
-      {
-        react: "sad",
-        count: newReacts.sad?.length ? newReacts.sad?.length : 0,
-      },
-      {
-        react: "wow",
-        count: newReacts.wow?.length ? newReacts.wow?.length : 0,
-      },
-      {
-        react: "angry",
-        count: newReacts.angry?.length ? newReacts.angry?.length : 0,
-      },
-      {
-        react: "love",
-        count: newReacts.love?.length ? newReacts.love?.length : 0,
-      },
-    ];
-    reacts.sort((a, b) => {
-      return b.count - a.count;
-    });
-
-    const user = await User.findById(req.user._id);
-    const savedPost = user.savedPosts.find(
-      (post) => post.post._id.toString() === postId
-    );
-    const isSavedPost = savedPost ? true : false;
-
-    if (reacted == null) {
-      return res.json({ reacts, total: reactsArray.length, isSavedPost });
-    } else {
-      return res.json({
-        reacts,
-        reacted: reacted.react,
-        total: reactsArray.length,
-        isSavedPost,
+    if (req.headers.id) {
+      const { postId } = req.params;
+      const reactsArray = await React.find({ postRef: postId });
+      const reacted = await React.findOne({
+        postRef: postId,
+        reactBy: req.headers.id,
       });
+
+      const newReacts = reactsArray.reduce((group, react) => {
+        let key = react["react"];
+        group[key] = group[key] || [];
+        group[key].push(react);
+        return group;
+      }, {});
+      const reacts = [
+        {
+          react: "like",
+          count: newReacts.like?.length ? newReacts.like?.length : 0,
+        },
+        {
+          react: "haha",
+          count: newReacts.haha?.length ? newReacts.haha?.length : 0,
+        },
+        {
+          react: "sad",
+          count: newReacts.sad?.length ? newReacts.sad?.length : 0,
+        },
+        {
+          react: "wow",
+          count: newReacts.wow?.length ? newReacts.wow?.length : 0,
+        },
+        {
+          react: "angry",
+          count: newReacts.angry?.length ? newReacts.angry?.length : 0,
+        },
+        {
+          react: "love",
+          count: newReacts.love?.length ? newReacts.love?.length : 0,
+        },
+      ];
+      reacts.sort((a, b) => {
+        return b.count - a.count;
+      });
+
+      const user = await User.findById(req.headers.id);
+      const savedPost = user.savedPosts.find(
+        (post) => post.post._id.toString() === postId
+      );
+      const isSavedPost = savedPost ? true : false;
+
+      if (reacted == null) {
+        return res.json({ reacts, total: reactsArray.length, isSavedPost });
+      } else {
+        return res.json({
+          reacts,
+          reacted: reacted.react,
+          total: reactsArray.length,
+          isSavedPost,
+        });
+      }
+    } else {
+      const { postId } = req.params;
+      const reactsArray = await React.find({ postRef: postId });
+      const newReacts = reactsArray.reduce((group, react) => {
+        let key = react["react"];
+        group[key] = group[key] || [];
+        group[key].push(react);
+        return group;
+      }, {});
+      const reacts = [
+        {
+          react: "like",
+          count: newReacts.like?.length ? newReacts.like?.length : 0,
+        },
+        {
+          react: "haha",
+          count: newReacts.haha?.length ? newReacts.haha?.length : 0,
+        },
+        {
+          react: "sad",
+          count: newReacts.sad?.length ? newReacts.sad?.length : 0,
+        },
+        {
+          react: "wow",
+          count: newReacts.wow?.length ? newReacts.wow?.length : 0,
+        },
+        {
+          react: "angry",
+          count: newReacts.angry?.length ? newReacts.angry?.length : 0,
+        },
+        {
+          react: "love",
+          count: newReacts.love?.length ? newReacts.love?.length : 0,
+        },
+      ];
+      reacts.sort((a, b) => {
+        return b.count - a.count;
+      });
+      return res.json({ reacts, total: reactsArray.length });
     }
   } catch (error) {
     return res

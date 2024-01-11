@@ -19,30 +19,41 @@ import {
 } from "../slices/postSlice";
 import Cookies from "js-cookie";
 
-export const getPostsActions = () => async (dispatch) => {
-  const { accessToken } = JSON.parse(Cookies.get("user"));
-  try {
+export const getPostsActions =
+  ({ isUserLoggedIn }) =>
+  async (dispatch) => {
     dispatch(setLoading(true));
-    const { data } = await axios.get(
-      `${process.env.REACT_APP_SERVER_ROUTE}/post/getAllPosts`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+    try {
+      if (isUserLoggedIn) {
+        const user = JSON.parse(Cookies.get("user"));
+        console.log("user");
+        const { data } = await axios.get(
+          `${process.env.REACT_APP_SERVER_ROUTE}/post/getAllPosts`,
+          {
+            headers: {
+              id: user.id,
+            },
+          }
+        );
+        dispatch(setAllPosts(data));
+      } else {
+        console.log("start...");
+        const { data } = await axios.get(
+          `${process.env.REACT_APP_SERVER_ROUTE}/post/getAllPosts`
+        );
+        dispatch(setAllPosts(data));
       }
-    );
-    dispatch(setAllPosts(data));
-  } catch (error) {
-    const err = error?.response?.data
-      ? error?.response?.data
-      : error?.response?.data?.message
-      ? error?.response?.data?.message
-      : error?.message
-      ? error?.message
-      : "Something went wrong, please try again!";
-    dispatch(setError(err));
-  }
-};
+    } catch (error) {
+      const err = error?.response?.data
+        ? error?.response?.data
+        : error?.response?.data?.message
+        ? error?.response?.data?.message
+        : error?.message
+        ? error?.message
+        : "Something went wrong, please try again!";
+      dispatch(setError(err));
+    }
+  };
 
 export const reactPostAction = (react, postId) => async (dispatch) => {
   const { accessToken } = JSON.parse(Cookies.get("user"));

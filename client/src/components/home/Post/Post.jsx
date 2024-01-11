@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import classes from "./post.module.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Dots, Public } from "../../../svg";
 import Moment from "react-moment";
 import ReactsPopup from "./ReactsPopup";
@@ -27,6 +27,7 @@ const Post = ({ post, user, profile }) => {
   const [count, setCount] = useState(1);
   const [totalReacts, setTotalReacts] = useState(0);
   const postRef = useRef();
+  const navigate = useNavigate();
 
   const { userInfo } = useSelector((state) => state.user);
 
@@ -63,27 +64,41 @@ const Post = ({ post, user, profile }) => {
   }, [newComments]);
 
   useEffect(() => {
-    const { accessToken } = JSON.parse(Cookies.get("user"));
-    (async () => {
-      const { data } = await axios.get(
-        `${process.env.REACT_APP_SERVER_ROUTE}/post/get-reacts/${post._id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
+    if (userInfo) {
+      const user = JSON.parse(Cookies.get("user"));
+      (async () => {
+        const { data } = await axios.get(
+          `${process.env.REACT_APP_SERVER_ROUTE}/post/get-reacts/${post._id}`,
+          {
+            headers: {
+              id: user.id,
+            },
+          }
+        );
+        setReacts(data.reacts);
+        setTotalReacts(data.total);
+        setIsSavedPost(data.isSavedPost);
+        if (data.reacted) {
+          setReacted(data.reacted);
         }
-      );
-      setReacts(data.reacts);
-      setTotalReacts(data.total);
-      setIsSavedPost(data.isSavedPost);
-      if (data.reacted) {
-        setReacted(data.reacted);
-      }
-    })();
+      })();
+    } else {
+      (async () => {
+        const { data } = await axios.get(
+          `${process.env.REACT_APP_SERVER_ROUTE}/post/get-reacts/${post._id}`
+        );
+        setReacts(data.reacts);
+        setTotalReacts(data.total);
+      })();
+    }
   }, [post]);
 
   const dispatch = useDispatch();
   const reactHandler = (type) => {
+    if (!userInfo) {
+      navigate("/login");
+      return;
+    }
     if (type === "" && reacted === "") {
       return;
     }
@@ -186,28 +201,30 @@ const Post = ({ post, user, profile }) => {
             </div>
           </div>
         </Link>
-        <div ref={menu}>
-          <div
-            className={`${classes.dots} hover2`}
-            onClick={() => setShowMenu((prev) => !prev)}
-          >
-            <Dots color="#828387" />
+        {userInfo && (
+          <div ref={menu}>
+            <div
+              className={`${classes.dots} hover2`}
+              onClick={() => setShowMenu((prev) => !prev)}
+            >
+              <Dots color="#828387" />
+            </div>
+            {showMenu && (
+              <PostMenu
+                userId={userInfo.id}
+                postUserId={post.user._id}
+                imagesLength={post?.images?.length}
+                setShowMenu={setShowMenu}
+                classes={classes}
+                postId={post._id}
+                isSavedPost={isSavedPost}
+                setIsSavedPost={setIsSavedPost}
+                images={post?.images}
+                isProfile={profile}
+              />
+            )}
           </div>
-          {showMenu && (
-            <PostMenu
-              userId={userInfo.id}
-              postUserId={post.user._id}
-              imagesLength={post?.images?.length}
-              setShowMenu={setShowMenu}
-              classes={classes}
-              postId={post._id}
-              isSavedPost={isSavedPost}
-              setIsSavedPost={setIsSavedPost}
-              images={post?.images}
-              isProfile={profile}
-            />
-          )}
-        </div>
+        )}
       </div>
 
       {post.background ? (
@@ -335,23 +352,39 @@ const Post = ({ post, user, profile }) => {
             {reacted ? reacted : "Like"}
           </span>
         </div>
-        <div className={`${classes.post_action} hover1`}>
+        <div
+          className={`${classes.post_action} hover1`}
+          onClick={() => {
+            if (!userInfo) {
+              navigate("/login");
+            }
+          }}
+        >
           <i className="comment_icon"></i>
           <span>Comment</span>
         </div>
-        <div className={`${classes.post_action} hover1`}>
+        <div
+          className={`${classes.post_action} hover1`}
+          onClick={() => {
+            if (!userInfo) {
+              navigate("/login");
+            }
+          }}
+        >
           <i className="share_icon"></i>
           <span>Share</span>
         </div>
       </div>
       <div className={classes.comments_wrap}>
         <div className={classes.comments_order}></div>
-        <CreateComment
-          classes={classes}
-          user={user}
-          postId={post._id}
-          createCommentHandler={commentHandler}
-        />
+        {userInfo && (
+          <CreateComment
+            classes={classes}
+            user={user}
+            postId={post._id}
+            createCommentHandler={commentHandler}
+          />
+        )}
         {comments &&
           comments
             ?.slice(0, count)
