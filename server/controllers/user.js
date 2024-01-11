@@ -275,7 +275,7 @@ exports.getProfile = async (req, res) => {
 exports.getAllImages = async (req, res) => {
   const { path, max } = req.body;
   try {
-    cloudinary.v2.api.resources(
+    await cloudinary.v2.api.resources(
       {
         type: "upload",
         prefix: path, // add your folder
