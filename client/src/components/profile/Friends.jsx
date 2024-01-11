@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
 
 const Friends = ({ friends, classes }) => {
+  if (friends?.length <= 0) {
+    return null;
+  }
   return (
     <div className={classes.profile_card}>
-      <div className={classes.profile_card_header}>
-        Friends
-        <p className={classes.profile_header_link}>See all friends</p>
-      </div>
+      <div className={classes.profile_card_header}>Friends</div>
       <div className={classes.profile_card_count}>
         {friends?.length === 0 || !friends
           ? ""

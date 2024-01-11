@@ -27,29 +27,31 @@ const Photos = ({ classes, username }) => {
           </h1>
         </div>
       ) : (
-        <div className={classes.profile_card}>
-          <div className={classes.profile_card_header}>
-            Photos
-            <p className={classes.profile_header_link}>See all photos</p>
+        allImages?.resources?.length > 0 && (
+          <div className={classes.profile_card}>
+            <div className={classes.profile_card_header}>Photos</div>
+            <div className={classes.profile_card_count}>
+              {allImages?.resources?.length === 0 ||
+              !allImages ||
+              !allImages?.resources
+                ? ""
+                : allImages?.resources?.length === 1
+                ? "1 Photo"
+                : `${allImages?.resources?.length} Photos`}
+            </div>
+            <div className={classes.profile_card_grid}>
+              {allImages?.resources &&
+                allImages?.resources.slice(0, 9).map((img) => (
+                  <div
+                    className={classes.profile_photo_card}
+                    key={img.public_id}
+                  >
+                    <img src={img.secure_url} alt="" />
+                  </div>
+                ))}
+            </div>
           </div>
-          <div className={classes.profile_card_count}>
-            {allImages?.resources?.length === 0 ||
-            !allImages ||
-            !allImages?.resources
-              ? ""
-              : allImages?.resources?.length === 1
-              ? "1 Photo"
-              : `${allImages?.resources?.length} Photos`}
-          </div>
-          <div className={classes.profile_card_grid}>
-            {allImages?.resources &&
-              allImages?.resources.slice(0, 9).map((img) => (
-                <div className={classes.profile_photo_card} key={img.public_id}>
-                  <img src={img.secure_url} alt="" />
-                </div>
-              ))}
-          </div>
-        </div>
+        )
       )}
     </>
   );
