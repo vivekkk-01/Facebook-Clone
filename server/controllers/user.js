@@ -282,7 +282,11 @@ exports.getAllImages = async (req, res) => {
         max_results: max,
       },
       function (error, result) {
-        if (error) throw new Error(error);
+        if (error) {
+          return res
+            .status(403)
+            .json("Something went wrong, please try again!");
+        }
         res.status(200).json(result);
       }
     );
