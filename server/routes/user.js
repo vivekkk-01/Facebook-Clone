@@ -79,7 +79,7 @@ router.post("/verify-otp", verifyOTP);
 
 router.post("/reset-password", postResetPassword);
 
-router.get("/get-profile/:username", auth, getProfile);
+router.get("/get-profile/:username", getProfile);
 
 router.post("/get-all-images", auth, getAllImages);
 
@@ -115,7 +115,7 @@ router.put("/un-friend/:id", auth, unFriend);
 
 router.put("/reject-request/:id", auth, rejectRequest);
 
-router.get("/search/:searchTerm", auth, searchUser);
+router.get("/search/:searchTerm", searchUser);
 
 router.put("/add-to-search-history", auth, addToSearchHistory);
 

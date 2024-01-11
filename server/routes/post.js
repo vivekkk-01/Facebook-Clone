@@ -24,11 +24,11 @@ router.post(
   createPost
 );
 
-router.get("/getAllPosts", auth, getAllPosts);
+router.get("/getAllPosts", getAllPosts);
 
 router.put("/react-post", auth, reactPost);
 
-router.get("/get-reacts/:postId", auth, getReacts);
+router.get("/get-reacts/:postId", getReacts);
 
 router.post(
   "/post-comment",
