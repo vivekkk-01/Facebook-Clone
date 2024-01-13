@@ -39,7 +39,9 @@ const SearchMenu = ({ classes, color, setShowSearchMenu }) => {
   };
 
   const searchHistoryHandler = (searchUser) => {
-    dispatch(setSearchHistoryAction(searchUser));
+    if (userInfo) {
+      dispatch(setSearchHistoryAction(searchUser));
+    }
   };
 
   useEffect(() => {
