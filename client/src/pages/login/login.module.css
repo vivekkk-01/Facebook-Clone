@@ -4,8 +4,8 @@
 }
 
 .login_wrap {
-  /* height: 78vh; */
   color: var(--color-primary);
+  padding: 0 1rem;
 }
 .login_1 {
   width: 300px;
@@ -61,8 +61,8 @@
   width: 70% !important;
   font-weight: 600 !important;
   font-size: 17px !important;
-  margin-top: .3rem;
-  margin-bottom: .3rem;
+  margin-top: 0.3rem;
+  margin-bottom: 0.3rem;
 }
 .sign_extra {
   font-size: 15px;
@@ -267,7 +267,7 @@
   .register {
     margin-top: 8rem;
   }
-  .login_wrap{
+  .login_wrap {
     margin-bottom: 2.5rem;
   }
 }
@@ -323,6 +323,13 @@
   }
   .login_footer_wrap {
     max-width: 900px;
+  }
+}
+
+@media (min-width: 600px) {
+  .login_wrap {
+    height: 75vh;
+    padding: 0 1rem;
   }
 }
 /*----Media queries--------------*/
