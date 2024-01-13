@@ -60,7 +60,11 @@ const EmojiPicker = ({
 
   return (
     <div className={type2 ? classes.images_input : ""}>
-      <div className={!type2 ? classes.flex_center : ""} ref={bgRef}>
+      <div
+        className={!type2 ? classes.flex_center : ""}
+        ref={bgRef}
+        onClick={() => setShowPicker(false)}
+      >
         <textarea
           ref={textRef}
           maxLength="250"
