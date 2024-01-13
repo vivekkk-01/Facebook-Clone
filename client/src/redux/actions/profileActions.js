@@ -30,6 +30,7 @@ export const profileAction = (isUserLoggedIn, username) => async (dispatch) => {
   dispatch(setLoading());
   try {
     if (isUserLoggedIn) {
+      console.log("is user logged in?", isUserLoggedIn);
       const user = JSON.parse(Cookies.get("user"));
       const { data } = await axios.get(
         `${process.env.REACT_APP_SERVER_ROUTE}/user/get-profile/${username}`,
@@ -61,17 +62,11 @@ export const profileAction = (isUserLoggedIn, username) => async (dispatch) => {
 export const allImagesAction =
   ({ path, sort, max }) =>
   async (dispatch) => {
-    const { accessToken } = JSON.parse(Cookies.get("user"));
     dispatch(setImagesLoading());
     try {
       const { data } = await axios.post(
         `${process.env.REACT_APP_SERVER_ROUTE}/user/get-all-images`,
-        { path, sort, max },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
+        { path, sort, max }
       );
       dispatch(setAllImages(data));
     } catch (error) {
@@ -89,17 +84,11 @@ export const allImagesAction =
 export const getProfilePicturesAction =
   ({ path, max, sort }) =>
   async (dispatch) => {
-    const { accessToken } = JSON.parse(Cookies.get("user"));
     dispatch(setProfilePicturesLoading());
     try {
       const { data } = await axios.post(
         `${process.env.REACT_APP_SERVER_ROUTE}/user/get-all-images`,
-        { path, sort, max },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
+        { path, sort, max }
       );
       dispatch(setProfilePictures(data));
     } catch (error) {

@@ -26,12 +26,12 @@ const Profile = () => {
   const ownProfile = username === userInfo?.username;
 
   useEffect(() => {
-    if (user) {
+    if (userInfo) {
       dispatch(profileAction(true, username));
     } else {
       dispatch(profileAction(false, username));
     }
-  }, [username, dispatch, user]);
+  }, [username, dispatch, userInfo]);
 
   return (
     <>
