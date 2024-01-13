@@ -81,7 +81,7 @@ router.post("/reset-password", postResetPassword);
 
 router.get("/get-profile/:username", getProfile);
 
-router.post("/get-all-images", auth, getAllImages);
+router.post("/get-all-images", getAllImages);
 
 router.put(
   "/update-profile-picture",

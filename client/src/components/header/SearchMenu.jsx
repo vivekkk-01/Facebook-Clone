@@ -23,6 +23,7 @@ const SearchMenu = ({ classes, color, setShowSearchMenu }) => {
     searchResults,
     searchHistory,
     searchResultsError,
+    userInfo,
   } = useSelector((state) => state.user);
   const navigate = useNavigate();
   useEffect(() => {
@@ -42,8 +43,10 @@ const SearchMenu = ({ classes, color, setShowSearchMenu }) => {
   };
 
   useEffect(() => {
-    dispatch(getSearchHistoryAction());
-  }, []);
+    if (userInfo) {
+      dispatch(getSearchHistoryAction());
+    }
+  }, [userInfo]);
 
   const deleteFromSearchHandler = (searchUser) => {
     dispatch(deleteFromSearchAction(searchUser));
@@ -111,10 +114,12 @@ const SearchMenu = ({ classes, color, setShowSearchMenu }) => {
                     {user.user.first_name} {user.user.last_name}
                   </span>
                 </Link>
-                <i
-                  className="exit_icon"
-                  onClick={deleteFromSearchHandler.bind(null, user.user._id)}
-                ></i>
+                {userInfo && (
+                  <i
+                    className="exit_icon"
+                    onClick={deleteFromSearchHandler.bind(null, user.user._id)}
+                  ></i>
+                )}
               </div>
             );
           })}

@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
-import store from "../../redux/store";
-import { redirect, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { profileAction } from "../../redux/actions/profileActions";
 import Header from "../../components/header/Header";
@@ -117,10 +116,3 @@ const Profile = () => {
 };
 
 export default Profile;
-
-export const loader = () => {
-  const userInfo = store.getState().user.userInfo;
-  if (!userInfo) return redirect("/login");
-
-  return null;
-};

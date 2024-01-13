@@ -241,30 +241,50 @@ exports.postResetPassword = async (req, res) => {
 exports.getProfile = async (req, res) => {
   try {
     const { username } = req.params;
-    const profile = await User.findOne({ username }).select("-password");
-    const me = await User.findById(req.user._id);
-    const ifItsMe = profile._id.toString() === me._id.toString();
-    const relation = {
-      friends: false,
-      following: false,
-      requestSent: false,
-      requestReceived: false,
-    };
+    if (req.headers.id) {
+      const profile = await User.findOne({ username }).select("-password");
+      const me = await User.findById(req.headers.id);
+      const ifItsMe = profile._id.toString() === me._id.toString();
+      const relation = {
+        friends: false,
+        following: false,
+        requestSent: false,
+        requestReceived: false,
+      };
 
-    if (!ifItsMe) {
-      if (profile.friends.includes(me._id) && me.friends.includes(profile._id))
-        relation.friends = true;
-      if (me.followings.includes(profile._id)) relation.following = true;
-      if (profile.requests.includes(me._id)) relation.requestSent = true;
-      if (me.requests.includes(profile._id)) relation.requestReceived = true;
+      if (!ifItsMe) {
+        if (
+          profile.friends.includes(me._id) &&
+          me.friends.includes(profile._id)
+        )
+          relation.friends = true;
+        if (me.followings.includes(profile._id)) relation.following = true;
+        if (profile.requests.includes(me._id)) relation.requestSent = true;
+        if (me.requests.includes(profile._id)) relation.requestReceived = true;
+      }
+      const posts = await Post.find({ user: profile._id })
+        .populate("user")
+        .populate("comments.commentBy", "first_name last_name username picture")
+        .sort({ createdAt: -1 });
+      if (!profile) return res.status(403).json("Profile Not Found!");
+      await profile.populate(
+        "friends",
+        "last_name first_name username picture"
+      );
+      return res.json({ ...profile.toObject(), posts, relation });
+    } else {
+      const profile = await User.findOne({ username }).select("-password");
+      const posts = await Post.find({ user: profile._id })
+        .populate("user")
+        .populate("comments.commentBy", "first_name last_name username picture")
+        .sort({ createdAt: -1 });
+      if (!profile) return res.status(403).json("Profile Not Found!");
+      await profile.populate(
+        "friends",
+        "last_name first_name username picture"
+      );
+      return res.json({ ...profile.toObject(), posts });
     }
-    const posts = await Post.find({ user: profile._id })
-      .populate("user")
-      .populate("comments.commentBy", "first_name last_name username picture")
-      .sort({ createdAt: -1 });
-    if (!profile) return res.status(403).json("Profile Not Found!");
-    await profile.populate("friends", "last_name first_name username picture");
-    return res.json({ ...profile.toObject(), posts, relation });
   } catch (error) {
     return res
       .status(error.code || 500)
