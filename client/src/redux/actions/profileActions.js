@@ -26,19 +26,26 @@ import {
 } from "../slices/profileSlice";
 import axios from "axios";
 
-export const profileAction = (username) => async (dispatch) => {
-  const { accessToken } = JSON.parse(Cookies.get("user"));
+export const profileAction = (isUserLoggedIn, username) => async (dispatch) => {
+  dispatch(setLoading());
   try {
-    dispatch(setLoading());
-    const { data } = await axios.get(
-      `${process.env.REACT_APP_SERVER_ROUTE}/user/get-profile/${username}`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
-    dispatch(setProfileInfo(data));
+    if (isUserLoggedIn) {
+      const user = JSON.parse(Cookies.get("user"));
+      const { data } = await axios.get(
+        `${process.env.REACT_APP_SERVER_ROUTE}/user/get-profile/${username}`,
+        {
+          headers: {
+            id: user.id,
+          },
+        }
+      );
+      dispatch(setProfileInfo(data));
+    } else {
+      const { data } = await axios.get(
+        `${process.env.REACT_APP_SERVER_ROUTE}/user/get-profile/${username}`
+      );
+      dispatch(setProfileInfo(data));
+    }
   } catch (error) {
     const err = error?.response?.data
       ? error?.response?.data
@@ -385,7 +392,7 @@ export const rejectRequestAction = (profileId) => async (dispatch) => {
 };
 
 export const createdPostFromProfileAction = (data) => (dispatch) => {
-  dispatch(createdPostFromProfile(data))
+  dispatch(createdPostFromProfile(data));
 };
 
 export const deletePostFromProfileAction = (postId) => async (dispatch) => {

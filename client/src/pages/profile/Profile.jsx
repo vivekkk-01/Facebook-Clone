@@ -18,15 +18,20 @@ import Intro from "../../components/profile/Intro";
 
 const Profile = () => {
   const { username } = useParams();
-  const { userInfo } = useSelector((state) => state.user);
+  const user = useSelector((state) => state.user);
+  const userInfo = user?.userInfo;
   const { profileInfo, error, loading } = useSelector((state) => state.profile);
   const dispatch = useDispatch();
 
   const ownProfile = username === userInfo?.username;
 
   useEffect(() => {
-    dispatch(profileAction(username));
-  }, [username, dispatch]);
+    if (user) {
+      dispatch(profileAction(true, username));
+    } else {
+      dispatch(profileAction(false, username));
+    }
+  }, [username, dispatch, user]);
 
   return (
     <>
