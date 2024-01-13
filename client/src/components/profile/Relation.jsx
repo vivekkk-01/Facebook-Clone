@@ -10,15 +10,19 @@ import {
   unFriendAction,
 } from "../../redux/actions/profileActions";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const Relation = ({ classes, relation, profileId }) => {
   const [relationship, setRelationship] = useState(relation);
   const [relationMenu, setRelationMenu] = useState(false);
   const [respondMenu, setRespondMenu] = useState(false);
   const { relationshipLoading } = useSelector((state) => state.profile);
+  const user = useSelector((state) => state.user);
+  const userInfo = user?.userInfo;
   const menuRef = useRef();
   const menuRef1 = useRef();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useClickOutside(menuRef, () => {
     setRelationMenu(false);
@@ -29,6 +33,9 @@ const Relation = ({ classes, relation, profileId }) => {
   });
 
   const addFriendHandler = () => {
+    if (!userInfo) {
+      return navigate("/login");
+    }
     if (relationshipLoading) return;
     setRelationship((prev) => {
       return {
@@ -41,6 +48,9 @@ const Relation = ({ classes, relation, profileId }) => {
   };
 
   const cancelRequestHandler = () => {
+    if (!userInfo) {
+      return navigate("/login");
+    }
     if (relationshipLoading) return;
     setRelationship((prev) => {
       return {
@@ -53,6 +63,9 @@ const Relation = ({ classes, relation, profileId }) => {
   };
 
   const followHandler = () => {
+    if (!userInfo) {
+      return navigate("/login");
+    }
     if (relationshipLoading) return;
     setRelationship((prev) => {
       return {
@@ -66,6 +79,9 @@ const Relation = ({ classes, relation, profileId }) => {
   };
 
   const unFollowHandler = () => {
+    if (!userInfo) {
+      return navigate("/login");
+    }
     if (relationshipLoading) return;
     setRelationship((prev) => {
       return {
@@ -79,6 +95,9 @@ const Relation = ({ classes, relation, profileId }) => {
   };
 
   const acceptRequestHandler = () => {
+    if (!userInfo) {
+      return navigate("/login");
+    }
     if (relationshipLoading) return;
     setRelationship((prev) => {
       return {
@@ -94,6 +113,9 @@ const Relation = ({ classes, relation, profileId }) => {
   };
 
   const unFriendHandler = () => {
+    if (!userInfo) {
+      return navigate("/login");
+    }
     if (relationshipLoading) return;
     setRelationship((prev) => {
       return {
@@ -109,6 +131,9 @@ const Relation = ({ classes, relation, profileId }) => {
   };
 
   const requestRejectHandler = () => {
+    if (!userInfo) {
+      return navigate("/login");
+    }
     if (relationshipLoading) return;
     setRelationship((prev) => {
       return {
@@ -302,7 +327,14 @@ const Relation = ({ classes, relation, profileId }) => {
             </button>
           )
         )}
-        <button className={relationship?.friends ? "blue_btn" : "gray_btn"}>
+        <button
+          onClick={() => {
+            if (!userInfo) {
+              return navigate("/login");
+            }
+          }}
+          className={relationship?.friends ? "blue_btn" : "gray_btn"}
+        >
           <img
             src="../../../icons/message.png"
             className={relationship?.friends ? classes.invert : ""}
