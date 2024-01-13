@@ -29,6 +29,10 @@ const CreatePostsPopup = ({ profile }) => {
   useClickOutside(popupRef, handlePostPopup);
 
   const handlePostSubmit = async () => {
+    if (text.trim() === "" && imageFiles.length <= 0) {
+      setError("Your post doesn't contain anything!");
+      return;
+    }
     setLoading(true);
     const formData = new FormData();
     formData.append("text", text);
@@ -113,6 +117,10 @@ const CreatePostsPopup = ({ profile }) => {
         <AddToPost classes={classes} setShowPrev={setShowPrev} />
         <button
           className={classes.post_submit}
+          style={{
+            cursor: `${loading ? "default" : "pointer"}`,
+            opacity: `${loading ? ".6" : "1"}`,
+          }}
           onClick={handlePostSubmit}
           disabled={loading}
         >
