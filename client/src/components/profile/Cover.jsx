@@ -103,7 +103,9 @@ const Cover = ({ cover, classes, ownProfile }) => {
           setCoverPicture("");
           setError("");
           setUpdateCover(true);
-          cRef.current.src = img;
+          if (cRef.current) {
+            cRef.current.src = img;
+          }
         }
       }, 2000);
     } catch (error) {
